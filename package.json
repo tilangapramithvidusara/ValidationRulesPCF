@@ -12,6 +12,8 @@
     "refreshTypes": "pcf-scripts refreshTypes"
   },
   "dependencies": {
+    "antd": "^5.5.1",
+    "json-loader": "^0.5.7",
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
