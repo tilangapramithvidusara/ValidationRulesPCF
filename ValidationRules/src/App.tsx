@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-// import FieldInput from './Components/customField/FieldInput';
-// import { sample_questions } from "./SampleData/sampleInputQuestion";
 import SearchWithSort from './Components/searchWithSort/searchWithSort';
 import DropDown from './Components/dropDown/dropDown';
+import CheckBox from './Components/checkbox/checkbox';
+
 import TableRow from './Components/tableRow/tableRow';
 
 import sampleInputQuestion from './SampleData/sampleInputQuestion';
@@ -22,13 +22,14 @@ interface Row {
 }
 
 interface Item {
-  index: number;
+  index: any;
   question: any;
   expression: any;
   operation: any;
   showhide: any;
   answerType: any;
 }
+
 
 export default function App() {
   // const props = { requiredProp: "bar" };
@@ -45,7 +46,9 @@ export default function App() {
   const [operation, setOperation] = useState<string | null>(null);
   const [showhide, setShowHide] = useState<string | null>(null);
   const [answerType, setAnswerType] = useState<string | null>(null);
-  const [finalOutput, setFinalOutput] = useState<Item[]>([]);
+  const [finalOutput, setFinalOutput] = useState<any[]>([]);
+  const [checkboxValues, setCheckboxValues] = useState<any[]>([]);
+  const [displayText, setDisplayText] = useState<any[]>([]);
 
   const addRow = () => {
     setRows([...rows, {
@@ -59,8 +62,11 @@ export default function App() {
     console.log("ROWWWW", rows)
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number, column: keyof Row) => {
-    console.log("Calleddd", e, index, column)
+  const handleInputChange = (index: number, column: any) => {
+    console.log("Calleddd", index, column)
+    const updatedKey = Object.keys(column)[0];
+    const updatedValue = Object.values(column)[0];
+
     const array = []
     array.push({ id: index, question, expression, operation, showhide, answerType })
     console.log("Calleddd array", array)
@@ -73,59 +79,81 @@ export default function App() {
       showhide: showhide,
       answerType: answerType
     };
-    setFinalOutput(prevItems => [...prevItems, newItem]);
+    if (finalOutput && finalOutput.length) {
+      let newState = [...finalOutput];
+      newState[index][updatedKey] = updatedValue;
+      setFinalOutput(newState)
+
+    } else {
+      setFinalOutput(prevItems => [...prevItems, newItem]);
+    }
+
+    if (finalOutput && finalOutput.length) {
+      let outputVal = ""
+      finalOutput.map(quesOutput => {
+        if (quesOutput?.question) {
+          outputVal = `if(${quesOutput?.question} ${quesOutput?.expression || ''} ${quesOutput?.answerType || ''} ${quesOutput?.operation || ''})`
+          setDisplayText(prevItems => [...prevItems, outputVal]);
+        }
+      })
+    }
   };
 
   useEffect(() => {
-    console.log("DJFIIFSS", finalOutput)
+    console.log("DJFIssIFSS", checkboxValues)
 
-  }, [finalOutput])
+  }, [finalOutput, checkboxValues])
+
   return (
     <>
       {/* <div>{question} {expression} {operation} {showhide} {answerType}</div> */}
+      <div className='pcf-wrapper'>
+        <div className='tableComponent'>
 
-      <div>{`if(`}{finalOutput && finalOutput.map(quesOutput => {
-        return (
-          <div> {quesOutput.question} {quesOutput.expression} {quesOutput.answerType} {quesOutput.showhide} {quesOutput.operation} </div>
-        )
-      })}{`)`} </div>
-      <div className='container'>
-        <div className='row clearfix'>
-          <div className='col-md-12 column'>
-            <table className='table table-bordered table-hover'>
-              <thead>
-                <tr>
-                  <th> Questions</th>
-                  <th> Expressions </th>
-                  <th> Value </th>
-                  <th> Operations</th>
-                  <th> Show/Hide</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((row, index) => (
-                  <TableRow
-                    key={index}
-                    row={row}
-                    index={index}
-                    handleInputChange={handleInputChange}
-                    onQuestionChanged={setQuestion}
-                    onExpressionChanged={setExpression}
-                    onAnswerTypeChanged={setAnswerType}
-                    onShowHideChanged={setShowHide}
-                    onOperationChanged={setOperation}
-
-                  />
-                ))}
-              </tbody>
-              <Button onClick={addRow}>Add Row</Button>
-            </table>
+          <div>{"if("}{finalOutput.map(quesOutput => {
+            if (quesOutput?.question) {
+              return `${quesOutput?.question} ${quesOutput?.expression || ''} ${quesOutput?.answerType || ''} ${quesOutput?.operation || ''}`
+            }
+          })}{"){"}</div>
+          <div>{checkboxValues.map(val => (` ${val} `))}</div>{`}`}
+          <div className='row clearfix'>
+            <div className='col-md-12 column'>
+              <table className='table table-bordered table-hover'>
+                <thead>
+                  <tr>
+                    <th> And/OR</th>
+                    <th> Field </th>
+                    <th> Operator </th>
+                    <th> Value </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((row, index) => (
+                    <TableRow
+                      key={index}
+                      row={row}
+                      index={index}
+                      handleInputChange={handleInputChange}
+                      onQuestionChanged={setQuestion}
+                      onExpressionChanged={setExpression}
+                      onAnswerTypeChanged={setAnswerType}
+                      onShowHideChanged={setShowHide}
+                      onOperationChanged={setOperation}
+                    />
+                  ))}
+                </tbody>
+                <Button onClick={addRow}>Add Row</Button>
+              </table>
+            </div>
           </div>
         </div>
+        <div> Actions </div>
+        <div className='actionfields'>
+          <CheckBox
+            setCheckboxValues={setCheckboxValues}
+          />
+        </div>
       </div>
-
-
-
     </>
   )
 }
