@@ -8,7 +8,8 @@ import sampleInputQuestion from '../../SampleData/sampleInputQuestion';
 import operationsSampleData from '../../SampleData/OperationsSampleData';
 import expressionSampleData from '../../SampleData/expressionSampleData';
 import showHideSampleData from '../../SampleData/showHideSampleData';
-import { Button, Input, InputNumber } from 'antd';
+import { Button, Input, InputNumber, Checkbox } from 'antd';
+import { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 interface Row {
     column1: string;
@@ -29,6 +30,7 @@ interface TableRowProps {
     onShowHideChanged: (selectedItem: string) => void;
     onOperationChanged: (selectedItem: string) => void;
     handleDeleteRow: (index: number) => void;
+    handleCheckboxClick: (index: number) => void;
   }
   
 function TableRow({
@@ -40,7 +42,8 @@ function TableRow({
     onShowHideChanged,
     onOperationChanged,
     handleInputChange,
-    handleDeleteRow
+    handleDeleteRow,
+    handleCheckboxClick
   }: TableRowProps) {
   
     const [selectedQuestion, setSelectedQuestion] = useState<any | null>(null);
@@ -92,6 +95,9 @@ function TableRow({
 
     return (
         <tr>
+            <td>
+                <Checkbox value={index} onClick={() => handleCheckboxClick(index)}/>
+            </td>
             {
             index !== 0 ? (
                 <td>
@@ -124,10 +130,6 @@ function TableRow({
                 />
           }
         </td>
-        {/* <td>
-          <DropDown sampleData={showHideSampleData} onSelectItem={setSelectedShowHide} />
-        </td> */}
-  
         <td>
         <Button onClick={() => handleDeleteRow(index)}> RemoveRow </Button>
       </td>

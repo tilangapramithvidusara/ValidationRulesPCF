@@ -92,6 +92,9 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey }) => {
       
       };
     
+    const handleCheckboxClick = (index: number) => {
+        console.log("Checkbox Clicked ", index)
+    }
     return (
         <div>
             <div className='AddSection'>
@@ -111,6 +114,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey }) => {
                                 <table className='table table-bordered table-hover'>
                                     <thead>
                                         <tr>
+                                            <th> </th>
                                             <th> And/OR</th>
                                             <th> Field </th>
                                             <th> Operator </th>
@@ -130,6 +134,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey }) => {
                                                 onShowHideChanged={setShowHide}
                                                 onOperationChanged={setOperation}
                                                 handleDeleteRow={handleDeleteRow}
+                                                handleCheckboxClick={handleCheckboxClick}
                                             />
                                         ))}
                                     </tbody>
