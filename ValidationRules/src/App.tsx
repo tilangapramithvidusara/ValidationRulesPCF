@@ -110,9 +110,9 @@ export default function App() {
       <div className='pcf-wrapper'>
         <div className='tableComponent'>
 
-          <div>{"if("}{finalOutput.map(quesOutput => {
+          <div>{"if("}{finalOutput.map((quesOutput, index) => {
             if (quesOutput?.question) {
-              return `${quesOutput?.question} ${quesOutput?.expression || ''} ${quesOutput?.answerType || ''} ${quesOutput?.operation || ''}`
+              return `${quesOutput?.question} ${quesOutput?.expression || ''} ${quesOutput?.answerType || ''} ${finalOutput[index+1]?.operation || ''} `
             }
           })}{"){"}</div>
           <div>{checkboxValues.map(val => (` ${val} `))}</div>{`}`}
@@ -147,11 +147,17 @@ export default function App() {
             </div>
           </div>
         </div>
-        <div> Actions </div>
+        
         <div className='actionfields'>
-          <CheckBox
+          <div style={{ marginTop: "5%", textAlign: "left" }}> 
+            <div>Actions</div> 
+            <div>
+            <CheckBox
             setCheckboxValues={setCheckboxValues}
-          />
+            />
+            </div>
+         
+            </div>
         </div>
       </div>
     </>

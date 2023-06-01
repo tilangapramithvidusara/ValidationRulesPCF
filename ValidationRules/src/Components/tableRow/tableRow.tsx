@@ -89,22 +89,27 @@ function TableRow({
       handleInputChange(index, { answerType: inputvalue })
     }, [inputvalue])
     return (
-      <tr>
-        <td>
-          <DropDown sampleData={operationsSampleData} onSelectItem={setSelectedOperations} />
-        </td>
+        <tr>
+            {
+            index !== 0 ? (
+                <td>
+                    <DropDown sampleData={operationsSampleData} onSelectItem={setSelectedOperations} />
+                </td>
+                ) :
+                <td></td>
+            }
         <td>
           <SearchWithSort
             sampleData={sampleInputQuestion}
             onSelectItem={setSelectedQuestion}
           />
-        </td>
-        <td>
-          <DropDown
-            sampleData={expressionSampleData}
-            onSelectItem={setSelectedExpression}
-          />
-        </td>
+            </td>
+            <td>
+                <DropDown
+                sampleData={expressionSampleData}
+                onSelectItem={setSelectedExpression}
+                />
+            </td>
         <td>
           {
             selectedQuestion && selectedQuestion?.questionType === 'text' ?
