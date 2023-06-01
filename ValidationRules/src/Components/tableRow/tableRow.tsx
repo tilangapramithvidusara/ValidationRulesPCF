@@ -28,6 +28,7 @@ interface TableRowProps {
     onAnswerTypeChanged: (selectedItem: string) => void;
     onShowHideChanged: (selectedItem: string) => void;
     onOperationChanged: (selectedItem: string) => void;
+    handleDeleteRow: (index: number) => void;
   }
   
 function TableRow({
@@ -38,7 +39,8 @@ function TableRow({
     onAnswerTypeChanged,
     onShowHideChanged,
     onOperationChanged,
-    handleInputChange
+    handleInputChange,
+    handleDeleteRow
   }: TableRowProps) {
   
     const [selectedQuestion, setSelectedQuestion] = useState<any | null>(null);
@@ -79,7 +81,6 @@ function TableRow({
     }, [selectedShowHide])
   
     const handleInputTextChanged = (value: any) => {
-      console.log("VALUESSS", value)
       onAnswerTypeChanged(value)
       handleInputChange(index, { answerType: value })
     }
@@ -88,6 +89,7 @@ function TableRow({
       onAnswerTypeChanged(inputvalue)
       handleInputChange(index, { answerType: inputvalue })
     }, [inputvalue])
+
     return (
         <tr>
             {
@@ -126,9 +128,9 @@ function TableRow({
           <DropDown sampleData={showHideSampleData} onSelectItem={setSelectedShowHide} />
         </td> */}
   
-        {/* <td>
-        <Button onClick={handleOnClick}> Add </Button>
-      </td> */}
+        <td>
+        <Button onClick={() => handleDeleteRow(index)}> RemoveRow </Button>
+      </td>
       </tr>
     );
   }

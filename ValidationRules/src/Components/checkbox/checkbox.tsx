@@ -14,10 +14,9 @@ function CheckBox({
 
     const onChange = (checkedValues: CheckboxValueType[]) => {
         setCheckboxValues(checkedValues)
-        console.log('checked = ', checkedValues);
     };
     return (
-        <Checkbox.Group style={{ width: '0%' }} onChange={onChange}>
+        <Checkbox.Group style={{ width: '57%', display:'inline', padding: "2%" }} onChange={onChange}>
             <Row>
                 <Col span={8}>
                     <Checkbox value="disable"> Disable</Checkbox>
