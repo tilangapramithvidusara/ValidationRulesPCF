@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import SectionComponent from '../Components/sctionComponent/sectionComponent';
+import { loadAllQuestionsInSurvey } from '../XRMRequests/xrmRequests';
 
 
 import { Button } from 'antd';
 
 const ParentComponent: React.FC = () => {
+    console.log('eee');
+    
     const [sections, setSections] = useState<{ key: string | number }[]>([{ key: 1 }]);
 
     let handleAddSection = () => {
@@ -17,6 +20,16 @@ const ParentComponent: React.FC = () => {
             setSections(sections.filter((section) => section.key !== sectionKey))
     }
 
+    const loadQuestionHandler = async() => {
+        const result = await loadAllQuestionsInSurvey();
+        // set result.data to a state
+    }
+
+    useEffect(() => {
+        console.log("============= 00 ===========> ");
+        loadQuestionHandler();
+    }, [])
+
     return (
         <div>
             {sections.map((section) => (
@@ -27,9 +40,8 @@ const ParentComponent: React.FC = () => {
                     <div>
                         <Button onClick={() => handleRemoveSection(section.key)}>Remove Clause</Button>
                     </div>
-                 </div>
-                 
-      ))}
+                 </div>     
+            ))}
             <Button onClick={handleAddSection}>Add New Clause</Button>
         </div>
     )
