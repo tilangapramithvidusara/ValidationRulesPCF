@@ -29,9 +29,10 @@ interface Item {
 
 interface SectionComponentProps {
     sectionKey: string | number;
+    setSectionOutput: (outputText: any) => void;
   }
 
-const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey }) => {
+const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSectionOutput }) => {
     const [rows, setRows] = useState<Row[]>([{
         column1: '',
         column2: '',
@@ -80,7 +81,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey }) => {
         } else {
           setFinalOutput(prevItems => [...prevItems, newItem]);
         }
-    
+        finalOutput && finalOutput.length && setSectionOutput([{key: sectionKey, rowOutput: finalOutput, checkboxValues: checkboxValues}]);
       };
 
     const handleDeleteRow = (index: number) => {
