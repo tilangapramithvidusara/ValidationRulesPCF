@@ -29,6 +29,8 @@ interface TableRowProps {
     onOperationChanged: (selectedItem: string) => void;
     handleDeleteRow: (index: number) => void;
     handleCheckboxClick: (index: number) => void;
+    setRowKey: any,
+    sampleObjData: any
 }
 
 function TableRow({
@@ -41,7 +43,9 @@ function TableRow({
     onOperationChanged,
     handleInputChange,
     handleDeleteRow,
-    handleCheckboxClick
+    handleCheckboxClick,
+    setRowKey,
+    sampleObjData
 }: TableRowProps) {
 
     const [selectedQuestion, setSelectedQuestion] = useState<any | null>(null);
@@ -53,32 +57,30 @@ function TableRow({
 
     useEffect(() => {
         if (selectedQuestion) onQuestionChanged(selectedQuestion?.value);
+        console.log("selectedQuestionselectedQuestion", selectedQuestion)
         handleInputChange(index, { question: selectedQuestion?.value })
-
     }, [selectedQuestion])
 
     useEffect(() => {
         if (selectedExpression) onExpressionChanged(selectedExpression?.value);
         handleInputChange(index, { expression: selectedExpression?.value })
-
     }, [selectedExpression])
 
     useEffect(() => {
         if (selectedAnswerType) onAnswerTypeChanged(selectedAnswerType?.value);
         handleInputChange(index, { answerType: selectedAnswerType?.value })
-
     }, [selectedAnswerType])
 
     useEffect(() => {
         if (selectedOperations) onOperationChanged(selectedOperations?.value);
         handleInputChange(index, { operation: selectedOperations?.value })
-
+        
     }, [selectedOperations])
 
     useEffect(() => {
         if (selectedShowHide) onShowHideChanged(selectedShowHide?.value);
         handleInputChange(index, { showhide: selectedShowHide?.value })
-
+       
     }, [selectedShowHide])
 
     const handleInputTextChanged = (value: any) => {
@@ -91,6 +93,12 @@ function TableRow({
         handleInputChange(index, { answerType: inputvalue })
     }, [inputvalue])
 
+    useEffect(() => {
+        console.log("DDDDDDDDDDSSSS", sampleObjData)
+        console.log("ROWWWWWW", row)
+
+    }, [])
+    
     return (
         <tr>
             <td>
@@ -108,6 +116,7 @@ function TableRow({
                 <SearchWithSort
                     sampleData={sampleInputQuestion}
                     onSelectItem={setSelectedQuestion}
+                    sampleQuestion={sampleObjData.Field}
                 />
             </td>
             <td>
