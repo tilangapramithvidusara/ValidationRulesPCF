@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import SectionComponent from '../Components/sctionComponent/sectionComponent';
 import { loadAllQuestionsInSurvey } from '../XRMRequests/xrmRequests';
+import { finalCondition } from '../SampleData/FinalConditionSample';
 
 
 import { Button } from 'antd';
+import { generateJsonHandler } from '../Utils/logics.utils';
 
 const ParentComponent: React.FC = () => {
-    console.log('eee');
-    
+
     const [sections, setSections] = useState<{ key: string | number }[]>([{ key: 1 }]);
 
     let handleAddSection = () => {
         const newKey = Math.round(Math.random() * (10000));
         setSections([...sections, { key: newKey }]);
     }
+
+    console.log("section ===> ", sections);
 
     const handleRemoveSection = (sectionKey: any) => {
         if(sections.length >= 2)
@@ -26,9 +29,12 @@ const ParentComponent: React.FC = () => {
     }
 
     useEffect(() => {
-        console.log("============= 00 ===========> ");
+        console.log("============= USE EFFECT ===========> ");
+        const logicData = generateJsonHandler(finalCondition);
+        console.log("logicData ======> ", logicData);
+        
         loadQuestionHandler();
-    }, [])
+    }, []);
 
     return (
         <div>

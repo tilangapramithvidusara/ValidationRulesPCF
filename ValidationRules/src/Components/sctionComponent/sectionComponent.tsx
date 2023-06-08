@@ -95,6 +95,9 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey }) => {
     const handleCheckboxClick = (index: number) => {
         console.log("Checkbox Clicked ", index)
     }
+
+    console.log("final ====> ", finalOutput);
+    
     return (
         <div>
             <div className='AddSection'>
