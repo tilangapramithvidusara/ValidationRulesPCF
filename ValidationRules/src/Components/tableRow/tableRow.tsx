@@ -92,12 +92,6 @@ function TableRow({
         onAnswerTypeChanged(inputvalue)
         handleInputChange(index, { answerType: inputvalue })
     }, [inputvalue])
-
-    useEffect(() => {
-        console.log("DDDDDDDDDDSSSS", sampleObjData)
-        console.log("ROWWWWWW", row)
-
-    }, [])
     
     return (
         <tr>
@@ -105,35 +99,43 @@ function TableRow({
                 <Checkbox value={index} onClick={() => handleCheckboxClick(index)} />
             </td>
             {
-                index !== 0 ? (
+                index !== 1 ? (
                     <td>
-                        <DropDown sampleData={operationsSampleData} onSelectItem={setSelectedOperations} />
+                        <DropDown
+                            sampleData={operationsSampleData}
+                            onSelectItem={setSelectedOperations}
+                            selectedValue={sampleObjData?.Operator || ""}
+                        />
                     </td>
                 ) :
-                    <td></td>
+                    <td>
+
+                    </td>
             }
             <td>
                 <SearchWithSort
                     sampleData={sampleInputQuestion}
                     onSelectItem={setSelectedQuestion}
-                    sampleQuestion={sampleObjData.Field}
+                    selectedValue={sampleObjData?.Field || ""}
                 />
             </td>
             <td>
                 <DropDown
                     sampleData={expressionSampleData}
                     onSelectItem={setSelectedExpression}
+                    selectedValue={sampleObjData?.expression || ""}
                 />
             </td>
             <td>
                 {
                     selectedQuestion && selectedQuestion?.questionType === 'text' ?
-                        <Input value={inputvalue} onChange={(e) => setInputvalue(e.target.value)} /> :
+                        <Input value={inputvalue} onChange={(e) => setInputvalue(e.target.value)} defaultValue={sampleObjData?.Value}/> :
                         selectedQuestion && selectedQuestion?.questionType === 'numeric' ?
                             <InputNumber onChange={(value) => handleInputTextChanged(value)} /> :
                             <DropDown
                                 sampleData={expressionSampleData}
                                 onSelectItem={setSelectedAnswerType}
+                                selectedValue={sampleObjData?.Value || ""}
                             />
                 }
             </td>

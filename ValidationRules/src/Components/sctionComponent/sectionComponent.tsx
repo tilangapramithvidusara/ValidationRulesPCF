@@ -33,7 +33,9 @@ interface SectionComponentProps {
     setElseAction: any,
     setRowKey: any,
     setSectionKey: any,
-    sampleObj: any
+    sampleObj: any,
+    setRowData: any,
+    setCheckboxValues: any
 }
 
 type CheckboxItem = {
@@ -45,7 +47,7 @@ type CheckboxItem = {
     [key: number]: boolean;
   };
 
-const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSectionOutput, setElseAction, setRowKey, setSectionKey, sampleObj }) => {
+const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSectionOutput, setElseAction, setRowKey, setSectionKey, sampleObj, setRowData, setCheckboxValues }) => {
     const initialCheckboxState: CheckboxState = {};
     const [rows, setRows] = useState<Row[]>([{
         key:'',
@@ -62,10 +64,8 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
     const [showhide, setShowHide] = useState<string | null>(null);
     const [answerType, setAnswerType] = useState<string | null>(null);
     const [finalOutput, setFinalOutput] = useState<any[]>([]);
-    const [checkboxValues, setCheckboxValues] = useState<any[]>([]);
     const [enableActionField, setEnableActionField] = useState<boolean | null>(null);
     const [elseActionCheckboxValues, setElseActionCheckboxValues]  = useState<any[]>([]);
-    const [selectCheckBoxValue, setSelectCheckBoxValue] = useState<any | null>(null);
 
     const addRow = () => {
         setRows([...rows, {
@@ -84,6 +84,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
         const updatedValue = Object.values(column)[0];
         console.log("updatedKey", updatedKey)
         console.log("updatedValue", updatedValue)
+        console.log("updatedindex", index)
 
         const newItem: Item = {
             index: index,
@@ -105,9 +106,48 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
         } else {
             setFinalOutput(prevItems => [...prevItems, newItem]);
         }
-        finalOutput && finalOutput?.length && setSectionOutput([{ key: sectionKey, rowOutput: finalOutput, checkboxValues: checkboxValues }]);
+        finalOutput && finalOutput?.length && setSectionOutput([{ key: sectionKey, rowOutput: finalOutput}]);
+
+        // Set the row key when you update the field
         setRowKey(index);
+        setSectionKey(sectionKey);
+        // Setting the Row Values
+        updateConditionAtRowKey(index, updatedKey, updatedValue, sectionKey);
     };
+
+    // Set the if condition when the rows getting updated
+    const updateConditionAtRowKey = (rowIndex: any, updateKey: any, updateValue: any, sectionKey: any) => {
+        if (updateValue && updateKey) {
+            setRowData((prevConditions: any[]) => {      
+                const updatedConditions = prevConditions.map((condition: { Row: any; sectionKey: any; }) => {
+                  if ((condition.Row === rowIndex ) && (condition.sectionKey === sectionKey)) {
+                    return {
+                      ...condition,
+                        [updateKey]: updateValue,
+                      sectionKey: sectionKey
+                    };
+                  }
+                  return condition;
+                });      
+                const conditionExists = updatedConditions.some((condition: { Row: any; sectionKey: any; }) => (condition.Row === rowIndex) && (condition.sectionKey === sectionKey));
+                if (!conditionExists) {
+                  return [
+                    ...updatedConditions,
+                    {
+                      [updateKey]: updateValue,
+                        Row: rowIndex,
+                        sectionKey: sectionKey
+                    }
+                  ];
+                } else {
+                  return updatedConditions;
+                }
+              });
+        }
+      
+      };
+      
+
 
     const handleDeleteRow = (index: number) => {
         if (rows && rows.length >= 2) {
@@ -125,6 +165,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
     const onActionCheckboxChanged = (e: CheckboxChangeEvent) => {
         console.log(`checked = ${e.target.checked}`);
         setEnableActionField(!enableActionField);
+        
     };
 
 
@@ -135,49 +176,9 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
         setSectionKey(sectionKey);
     }, [elseActionCheckboxValues])
 
-
-    // useEffect(() => {
-    //     if (sampleObj && sampleObj[0] && sampleObj[0]["if"]) {
-    //         console.log("sectionKey --->", sectionKey);
-    //         console.log("sectionKey", rows);
-
-    //       console.log("sampleObj[sectionKey]", sampleObj);
-    //       console.log("sampleObj[sectionKey]", sampleObj[0]["if"].conditions);
-    //       sampleObj[0]["if"].conditions.forEach((x: any) => {
-      
-    //         setRows(prevRows => [
-    //           ...prevRows,
-    //           {
-    //             column1: 'awdaw',
-    //             column2: '',
-    //             column3: '',
-    //             column4: '',
-    //             column5: '',
-    //             column6: ''
-    //           }
-    //         ]);
-      
-    //         console.log("ROWSSS", rows);
-    //       });
-    //     }
-    //   }, [sampleObj]);
-
     useEffect(() => {
-        console.log("Render rows", rows)
-    }, [rows])
-
-    useEffect(() => {
-        console.log("sectionssections", sectionKey)
-
         if (sampleObj && sampleObj[0] && sampleObj[0]["if"]) {
-            console.log("sectionKeyyyy --->", sectionKey);
-            console.log("sectionKeyyyy", rows);
-
-          console.log("sampleObj[sectionKey]", sampleObj);
-          console.log("sampleObj[sectionKey]", sampleObj[0]["if"].conditions);
           sampleObj[0]["if"].conditions.forEach((x: any) => {
-            console.log("sampleObj[xxxxxx]", x);
-
             setRows(prevRows => [
               ...prevRows,
               {
@@ -190,16 +191,13 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                 key: x.Row
               }
             ]);
-      
-            // setRows(updatedRows.map((row, index) => ({ ...row, key: index + 1 })));
-
           });
         }
-    }, [sectionKey])
 
-    useEffect(() => {
-        console.log("ROWSAAAAAA", rows)
-    }, [rows])
+        if(sampleObj && sampleObj[0] && sampleObj[0]["else"]?.actions?.length) setEnableActionField(true)
+    }, [sampleObj])
+
+   
     return (
         <div>
             <div className='AddSection'>
@@ -207,11 +205,13 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                     <div className='tableComponent'>
 
                         {
-                            finalOutput && finalOutput.length && <div>{"if("}{finalOutput.map((quesOutput, index) => {
+                            finalOutput && finalOutput.length && <div style={{ textAlign: "left"}}>{"if("}{finalOutput.map((quesOutput, index) => {
                                 if (quesOutput?.question) {
                                     return `${quesOutput?.question} ${quesOutput?.expression || ''} ${quesOutput?.answerType || ''} ${finalOutput[index + 1]?.operation || ''} `
                                 }
-                            })}{"){"} <div>{checkboxValues.map(val => (` ${val} &&`))}{`}`}</div> </div>
+                            })}{"){"}
+                                {/* <div>{checkboxValues.map(val => (` ${val} &&`))}{`}`}</div> */}
+                            </div>
                         }
 
                         <div className='row clearfix'>
@@ -229,9 +229,9 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                                     <tbody>
                                         {rows.map((row, index) => (
                                             <TableRow
-                                                key={index}
+                                                key={index+1}
                                                 row={row}
-                                                index={index}
+                                                index={index+1}
                                                 setRowKey={setRowKey}
                                                 handleInputChange={handleInputChange}
                                                 onQuestionChanged={setQuestion}
@@ -241,8 +241,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                                                 onOperationChanged={setOperation}
                                                 handleDeleteRow={handleDeleteRow}
                                                 handleCheckboxClick={handleCheckboxClick}
-                                                // sampleObjData={sampleObj[0]["if"].conditions}
-                                                sampleObjData={sampleObj[0]["if"].conditions.find((item: any) => item.Row === row.key) || []}
+                                                sampleObjData={sampleObj && sampleObj[0] && sampleObj[0]["if"].conditions.find((item: any) => item.Row === row.key) || {}}
 
                                             />
                                         ))}
@@ -259,6 +258,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                                 <CheckBox
                                     setCheckboxValues={setCheckboxValues}
                                     onChange={onActionCheckboxChanged}
+                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions || []}
                                     />
                             </div>
                         </div>
@@ -266,24 +266,26 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
 
                     <div>
                         <div className='else-actions'>
-                            <div className='' style={{textAlign: "left"}}> <Checkbox onChange={onActionCheckboxChanged} /> Else actions</div>
+                            <div className='' style={{ textAlign: "left" }}>
+                                <Checkbox
+                                    onChange={onActionCheckboxChanged}
+                                    defaultChecked={ sampleObj && sampleObj[0] && sampleObj[0]["else"]?.actions?.length}
+                                /> Else actions
+                            </div>
                                 {
                                     enableActionField ?
-                                        <div style={{ marginTop: "5%", textAlign: "left" }}>
-                                            <div>Else Actions</div>
-                                                <div>
-                                                    <CheckBox
-                                                setCheckboxValues={setElseActionCheckboxValues}
-                                                onChange={onElseCheckboxValuesChanged}
-                                            />
+                                        <div style={{ textAlign: "left" }}>
+                                            <div>
+                                                <CheckBox
+                                                    setCheckboxValues={setElseActionCheckboxValues}
+                                                    onChange={onElseCheckboxValuesChanged}
+                                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["else"].actions || []}
+                                                />
                                             </div>
                                     </div> : <div></div>
                                 }
                         </div>
                     </div>
-
-
-                    {/* <Button onClick={handleRemoveSection}>Remove Clause</Button> */}
                 </div>
             </div>
 

@@ -5,10 +5,10 @@ import sampleInputQuestion from '../../SampleData/sampleInputQuestion';
 interface SearchSortProps {
     sampleData: any[]; // Adjust the type/interface as needed
     onSelectItem: (selectedItem: string) => void;
-    sampleQuestion: any
+    selectedValue: any
 }
   
-const SearchWithSort: React.FC<SearchSortProps> = ({sampleData, onSelectItem, sampleQuestion}) => {
+const SearchWithSort: React.FC<SearchSortProps> = ({sampleData, onSelectItem, selectedValue}) => {
 
     const searchFilterSort = (optionA: any, optionB: any) => {
         return (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase());
@@ -33,7 +33,7 @@ const SearchWithSort: React.FC<SearchSortProps> = ({sampleData, onSelectItem, sa
                 filterSort={searchFilterSort}
                 onChange={onChangeSearchEvent}
                 options={sampleData}
-                defaultValue={sampleQuestion}
+                defaultValue={selectedValue}
             />
         </div>
     )
