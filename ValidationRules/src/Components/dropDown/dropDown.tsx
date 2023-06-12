@@ -10,10 +10,6 @@ interface SearchSortProps {
 }
   
 const FieldInput: React.FC<SearchSortProps> = ({sampleData, onSelectItem, selectedValue}) => {
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
-    useEffect(() => {
-        console.log(sampleData)
-    })
     return (
         <div>
             <Select

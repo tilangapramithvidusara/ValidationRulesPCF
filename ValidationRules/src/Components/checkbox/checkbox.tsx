@@ -4,18 +4,16 @@ import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 interface CheckBoxProps {
   setCheckboxValues: (selectedItem: CheckboxValueType[]) => void;
-    onChange: any;
     checkboxDefaultSelectedValues: any,
 }
 
 function CheckBox({
   setCheckboxValues,
-    onChange,
     checkboxDefaultSelectedValues
 }: CheckBoxProps) {
-  onChange = (checkedValues: CheckboxValueType[]) => {
+  const onChange = (checkedValues: CheckboxValueType[]) => {
     console.log("EFEFEFE", checkedValues);
-    setCheckboxValues(checkedValues);
+    setCheckboxValues(checkedValues || []);
   };
 
   return (

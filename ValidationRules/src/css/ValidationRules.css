@@ -12,3 +12,14 @@
   .pcf-wrapper .float-right {
     text-align: right;
   }
+
+  .custom-toggle {
+    & .ant-switch-checked {
+      background-color: #6c7986; /* Set the background color for the checked state */
+    }
+    
+    & .ant-switch-handle {
+      background-color: #4e4e4f; /* Set the background color for the switch handle */
+    }
+  }
+  

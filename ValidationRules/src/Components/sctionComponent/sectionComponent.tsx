@@ -6,8 +6,9 @@ import CheckBox from '../../Components/checkbox/checkbox';
 import TableRow from '../../Components/tableRow/tableRow';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { Button, Checkbox, Input, InputNumber } from 'antd';
-import { log } from 'console';
-
+import { Switch } from 'antd';
+import operationsSampleData from '../../SampleData/sampleInputQuestion';
+import NumberInputField from '../numberInput/numberInput';
 interface Row {
     key: string,
     column1: string;
@@ -30,12 +31,13 @@ interface Item {
 interface SectionComponentProps {
     sectionKey: number;
     setSectionOutput: (outputText: any) => void;
-    setElseAction: any,
+    // setElseAction: any,
     setRowKey: any,
     setSectionKey: any,
     sampleObj: any,
     setRowData: any,
-    setCheckboxValues: any
+    setCheckboxValues: any,
+    setSectionMinMaxFieldValues: any
 }
 
 type CheckboxItem = {
@@ -47,7 +49,14 @@ type CheckboxItem = {
     [key: number]: boolean;
   };
 
-const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSectionOutput, setElseAction, setRowKey, setSectionKey, sampleObj, setRowData, setCheckboxValues }) => {
+  type MinMaxFieldValues = {
+    minValue: any,
+    maxValue: any,
+    sectionKey: any,
+    questionName: any
+  };
+
+const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSectionOutput, setRowKey, setSectionKey, sampleObj, setRowData, setCheckboxValues, setSectionMinMaxFieldValues }) => {
     const initialCheckboxState: CheckboxState = {};
     const [rows, setRows] = useState<Row[]>([{
         key:'',
@@ -65,7 +74,17 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
     const [answerType, setAnswerType] = useState<string | null>(null);
     const [finalOutput, setFinalOutput] = useState<any[]>([]);
     const [enableActionField, setEnableActionField] = useState<boolean | null>(null);
-    const [elseActionCheckboxValues, setElseActionCheckboxValues]  = useState<any[]>([]);
+    const [toggleEnabled, setToggleEnabled] = useState(false);
+    const [ifConfitionActions, setIfConditionActions] = useState<any | null>(null);
+
+    const [minMaxValue, setMinMaxValue] = useState<MinMaxFieldValues>({
+        minValue: 0,
+        maxValue: 0,
+        sectionKey: null,
+        questionName: null
+      });
+      const [minQuestionValue, setMinQuestionValue] = useState<any | null>(null);
+      const [maxQuestionValue, setMaxQuestionValue] = useState<any | null>(null);
 
     const addRow = () => {
         setRows([...rows, {
@@ -162,20 +181,6 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
         console.log("Checkbox Clicked ", index)
     }
 
-    const onActionCheckboxChanged = (e: CheckboxChangeEvent) => {
-        console.log(`checked = ${e.target.checked}`);
-        setEnableActionField(!enableActionField);
-        
-    };
-
-
-    const onElseCheckboxValuesChanged = () => {}
-
-    useEffect(() => {    
-        setElseAction({ key: sectionKey, checkBoxValues: elseActionCheckboxValues })
-        setSectionKey(sectionKey);
-    }, [elseActionCheckboxValues])
-
     useEffect(() => {
         if (sampleObj && sampleObj[0] && sampleObj[0]["if"]) {
           sampleObj[0]["if"].conditions.forEach((x: any) => {
@@ -194,10 +199,63 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
           });
         }
 
-        if(sampleObj && sampleObj[0] && sampleObj[0]["else"]?.actions?.length) setEnableActionField(true)
     }, [sampleObj])
 
-   
+    // useEffect(() => {
+    //     console.log("setMinMaxValuessetMinMaxValues", minMaxValues)
+       
+    // }, [minMaxValues])
+
+    const onToggleValueChanged = (value: any) => {
+        setToggleEnabled(value)
+    }
+    const handleMinValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e); 
+        setSectionKey(sectionKey);
+        setMinMaxValue((prevState) => {
+            return {
+              ...prevState,
+              minValue: value,
+              sectionKey: sectionKey
+            };
+          });
+      };
+    
+    const handleMaxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e);
+        setSectionKey(sectionKey);
+        setMinMaxValue((prevState) => {
+            return {
+              ...prevState,
+              maxValue: value,
+              sectionKey: sectionKey
+            };
+          });
+      };
+    
+    useEffect(() => {
+        setSectionKey(sectionKey);
+        setMinMaxValue((prevState) => {
+            return {
+                ...prevState,
+                maxValue: maxQuestionValue?.label || '',
+                minValue: minQuestionValue?.label || ''
+            };
+        });
+    }, [minQuestionValue, maxQuestionValue]);
+
+    useEffect(() => {
+        console.log("minMaxValueminMaxValue", minMaxValue);
+        setSectionKey(sectionKey);
+        setSectionMinMaxFieldValues(minMaxValue);
+    }, [minMaxValue])
+
+    useEffect(() => {
+        console.log("ifConfitionActions", ifConfitionActions);
+        setSectionKey(sectionKey);
+        setCheckboxValues(ifConfitionActions || []);
+    }, [ifConfitionActions])
+
     return (
         <div>
             <div className='AddSection'>
@@ -242,7 +300,6 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                                                 handleDeleteRow={handleDeleteRow}
                                                 handleCheckboxClick={handleCheckboxClick}
                                                 sampleObjData={sampleObj && sampleObj[0] && sampleObj[0]["if"].conditions.find((item: any) => item.Row === row.key) || {}}
-
                                             />
                                         ))}
                                     </tbody>
@@ -256,40 +313,58 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                             <div>Actions</div>
                             <div>
                                 <CheckBox
-                                    setCheckboxValues={setCheckboxValues}
-                                    onChange={onActionCheckboxChanged}
+                                    setCheckboxValues={setIfConditionActions}
                                     checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions || []}
                                     />
                             </div>
+                            <div>Min/Max Field
+                                <Switch
+                                    className="custom-toggle"
+                                    checkedChildren="Min Max Value"
+                                    unCheckedChildren="Quesion Name"
+                                    onChange={onToggleValueChanged}
+                                    />
+                            </div>
+                            {
+                                toggleEnabled ?
+                                    <div className='' style={{ textAlign: "left" }}>
+                                        <div>
+                                            Min Value: <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
+                                        </div>
+                                        <div>
+                                            Max Value: <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
+                                        </div>
+                                    </div>
+                                    :
+                                    <div className='' style={{ textAlign: "left" }}>
+                                        <div>
+                                            Min Value:
+                                            <DropDown
+                                                sampleData={operationsSampleData}
+                                                onSelectItem={setMinQuestionValue}
+                                                selectedValue={""}
+                                            />
+                                        </div>
+                                        <div>
+                                            Max Value:
+                                            <DropDown
+                                                sampleData={operationsSampleData}
+                                                onSelectItem={setMaxQuestionValue}
+                                                selectedValue={""}
+                                            />
+                                        </div>
+                                </div>
+                            }
+                           
+                            </div>
+                            
                         </div>
                     </div>
 
                     <div>
-                        <div className='else-actions'>
-                            <div className='' style={{ textAlign: "left" }}>
-                                <Checkbox
-                                    onChange={onActionCheckboxChanged}
-                                    defaultChecked={ sampleObj && sampleObj[0] && sampleObj[0]["else"]?.actions?.length}
-                                /> Else actions
-                            </div>
-                                {
-                                    enableActionField ?
-                                        <div style={{ textAlign: "left" }}>
-                                            <div>
-                                                <CheckBox
-                                                    setCheckboxValues={setElseActionCheckboxValues}
-                                                    onChange={onElseCheckboxValuesChanged}
-                                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["else"].actions || []}
-                                                />
-                                            </div>
-                                    </div> : <div></div>
-                                }
-                        </div>
                     </div>
                 </div>
             </div>
-
-        </div>
     )
 }
 
