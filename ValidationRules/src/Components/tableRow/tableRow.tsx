@@ -145,7 +145,7 @@ function TableRow({
                 }
             </td>
             <td>
-                <Button onClick={() => handleDeleteRow(index)}> RemoveRow </Button>
+                <Button onClick={() => handleDeleteRow(index)} className="btn-remove"> RemoveRow </Button>
             </td>
         </tr>
     );

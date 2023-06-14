@@ -9,6 +9,7 @@ import NumberInputField from '../Components/numberInput/numberInput';
 import DropDown from '../Components/dropDown/dropDown';
 import operationsSampleData from '../SampleData/sampleInputQuestion';
 import configs from '../configs/actionMapper';
+// import removeIcon from '../assets/delete.png';
 
 type MinMaxFieldValues = {
     minValue: any,
@@ -360,7 +361,7 @@ const ParentComponent: React.FC = () => {
     }
     return (
         <div>
-            <div className="displayText" style={{ textAlign: "left", padding: "2%", border: "ridge", backgroundColor: "#D3D3D3" }}>
+            <div className="displayText">
                 <DisplayText fieldOutputData={[]} />
                 {
                     showOutput && showOutput.length > 0 && showOutput.map(x => {
@@ -383,8 +384,7 @@ const ParentComponent: React.FC = () => {
                 }
             </div>
             {sections.map((section) => (
-                <div key={section.key} style={{ border: "ridge" }}>
-                    <div>
+                <div key={section.key}>
                         <SectionComponent
                             sectionKey={section.key}
                             setSectionOutput={setSectionOutput}
@@ -397,25 +397,22 @@ const ParentComponent: React.FC = () => {
                             questionList={questionList}
                             actionList={actionList}
                         />
-                    </div>
-                    <div>
-                        <Button onClick={() => handleRemoveSection(section.key)}>Remove Clause</Button>
+                    
+                    <div className='text-left'>
+                        <Button onClick={() => handleRemoveSection(section.key)} className="btnAddRow">Remove Clause</Button>
                     </div>
 
                 </div>
             ))}
-            <Button onClick={handleAddSection}>Add New Clause</Button>
-            <div className='else-actions'>
-                <div className='' style={{ textAlign: "left" }}>
-
-
-                    <div style={{ marginTop: "5%", textAlign: "left" }}>
-                        <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+            <div className='text-left'><Button onClick={handleAddSection} className="btnAddRow">Add New Clause</Button></div>
+            <div className='else-actions tableComponent'>
+                    <div>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px' }}>
                             <Checkbox
                                 onChange={onActionCheckboxChanged}
                                 defaultChecked={sampleData?.elseConditions?.actions?.length}
                             />
-                            Else actions</div>
+                            <span className='elseText'>Else actions</span></div>
                         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px' }}>
                             {
                                 enableActionField ? <div>
@@ -427,12 +424,11 @@ const ParentComponent: React.FC = () => {
                             }
                         </div>
                     </div>
-                </div>
-            </div>
-            <div style={{ marginTop: "5%", textAlign: "left" }}>
-                <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Min/Max Field</div>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                    <div style={{ marginRight: '10px' }}>Min/Max Value:</div>
+            
+            <div>
+                <div className='subTitle mb-15'>Min/Max Field</div>
+                <div className='mb-15 flex-wrap'>
+                    <div className='minmaxText'>Min/Max Value:</div>
                     <Switch
                         className="custom-toggle"
                         checkedChildren="Min Max Value"
@@ -442,13 +438,13 @@ const ParentComponent: React.FC = () => {
                 </div>
                 {
                     toggleEnabled ?
-                        <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
-                            <div style={{ width: '200px', marginRight: '10px' }}>Min Value:</div>
+                        <div className='mb-15 flex-wrap'>
+                            <div className='minmaxText'>Min Value:</div>
                             <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
                         </div>
                         :
-                        <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
-                            <div style={{ width: '200px', marginRight: '10px' }}>Min Value:</div>
+                        <div className='mb-15 flex-wrap'>
+                            <div className='minmaxText'>Min Value:</div>
                             <DropDown
                                 sampleData={operationsSampleData}
                                 onSelectItem={setMinQuestionValue}
@@ -458,13 +454,13 @@ const ParentComponent: React.FC = () => {
                 }
                 {
                     toggleEnabled ?
-                        <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
-                            <div style={{ width: '200px', marginRight: '10px' }}>Max Value:</div>
+                        <div className='mb-15 flex-wrap'>
+                            <div className='minmaxText'>Max Value:</div>
                             <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
                         </div>
                         :
-                        <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
-                            <div style={{ width: '200px', marginRight: '10px' }}>Max Value:</div>
+                        <div className='mb-15 flex-wrap'>
+                            <div className='minmaxText'>Max Value:</div>
                             <DropDown
                                 sampleData={operationsSampleData}
                                 onSelectItem={setMaxQuestionValue}
@@ -472,6 +468,7 @@ const ParentComponent: React.FC = () => {
                             />
                         </div>
                 }
+            </div>
             </div>
         </div>
     );
