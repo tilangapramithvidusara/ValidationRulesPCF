@@ -1,7 +1,7 @@
 
 export const expressionSampleData: any[] = [{
     options: [
-        { label: "isEqualTo", value: "===" },
+        { label: "isEqualTo", value: "==" },
         { label: "graterThan", value: ">" },
         { label: "lowerThan", value: "<" },
         { label: "graterThan or equal", value: ">=" },

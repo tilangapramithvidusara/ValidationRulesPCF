@@ -9,8 +9,10 @@ import { Button, Checkbox, Input, InputNumber } from 'antd';
 import { Switch } from 'antd';
 import operationsSampleData from '../../SampleData/sampleInputQuestion';
 import NumberInputField from '../numberInput/numberInput';
+import { log } from 'console';
+
 interface Row {
-    key: string,
+    key: any,
     column1: string;
     column2: string;
     column3: string;
@@ -37,29 +39,25 @@ interface SectionComponentProps {
     sampleObj: any,
     setRowData: any,
     setCheckboxValues: any,
-    setSectionMinMaxFieldValues: any
+    setSectionMinMaxFieldValues: any,
+    questionList: any
 }
 
-type CheckboxItem = {
-    Key: number;
-    values: string[];
-  };
-  
-  type CheckboxState = {
+type CheckboxState = {
     [key: number]: boolean;
-  };
+};
 
-  type MinMaxFieldValues = {
+type MinMaxFieldValues = {
     minValue: any,
     maxValue: any,
     sectionKey: any,
     questionName: any
-  };
+};
 
-const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSectionOutput, setRowKey, setSectionKey, sampleObj, setRowData, setCheckboxValues, setSectionMinMaxFieldValues }) => {
+const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSectionOutput, setRowKey, setSectionKey, sampleObj, setRowData, setCheckboxValues, setSectionMinMaxFieldValues, questionList }) => {
     const initialCheckboxState: CheckboxState = {};
     const [rows, setRows] = useState<Row[]>([{
-        key:'',
+        key: 0,
         column1: '',
         column2: '',
         column3: '',
@@ -73,7 +71,6 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
     const [showhide, setShowHide] = useState<string | null>(null);
     const [answerType, setAnswerType] = useState<string | null>(null);
     const [finalOutput, setFinalOutput] = useState<any[]>([]);
-    const [enableActionField, setEnableActionField] = useState<boolean | null>(null);
     const [toggleEnabled, setToggleEnabled] = useState(false);
     const [ifConfitionActions, setIfConditionActions] = useState<any | null>(null);
 
@@ -82,20 +79,24 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
         maxValue: 0,
         sectionKey: null,
         questionName: null
-      });
-      const [minQuestionValue, setMinQuestionValue] = useState<any | null>(null);
-      const [maxQuestionValue, setMaxQuestionValue] = useState<any | null>(null);
+    });
+    const [minQuestionValue, setMinQuestionValue] = useState<any | null>(null);
+    const [maxQuestionValue, setMaxQuestionValue] = useState<any | null>(null);
+    const [removeRow, setRemoveRow] = useState<any | null>(false);
 
     const addRow = () => {
-        setRows([...rows, {
-            key:'',
-            column1: '',
-            column2: '',
-            column3: '',
-            column4: '',
-            column5: '',
-            column6: ''
-        }]);
+        setRows(prevRows => ([
+            ...prevRows,
+            {
+                key: prevRows.length,
+                column1: '',
+                column2: '',
+                column3: '',
+                column4: '',
+                column5: '',
+                column6: ''
+            }
+        ]) as Row[]);
     };
 
     const handleInputChange = (index: number, column: any) => {
@@ -125,7 +126,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
         } else {
             setFinalOutput(prevItems => [...prevItems, newItem]);
         }
-        finalOutput && finalOutput?.length && setSectionOutput([{ key: sectionKey, rowOutput: finalOutput}]);
+        finalOutput && finalOutput?.length && setSectionOutput([{ key: sectionKey, rowOutput: finalOutput }]);
 
         // Set the row key when you update the field
         setRowKey(index);
@@ -137,45 +138,58 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
     // Set the if condition when the rows getting updated
     const updateConditionAtRowKey = (rowIndex: any, updateKey: any, updateValue: any, sectionKey: any) => {
         if (updateValue && updateKey) {
-            setRowData((prevConditions: any[]) => {      
+            setRowData((prevConditions: any[]) => {
                 const updatedConditions = prevConditions.map((condition: { Row: any; sectionKey: any; }) => {
-                  if ((condition.Row === rowIndex ) && (condition.sectionKey === sectionKey)) {
-                    return {
-                      ...condition,
-                        [updateKey]: updateValue,
-                      sectionKey: sectionKey
-                    };
-                  }
-                  return condition;
-                });      
+                    if ((condition.Row === rowIndex) && (condition.sectionKey === sectionKey)) {
+                        return {
+                            ...condition,
+                            [updateKey]: updateValue,
+                            sectionKey: sectionKey
+                        };
+                    }
+                    return condition;
+                });
                 const conditionExists = updatedConditions.some((condition: { Row: any; sectionKey: any; }) => (condition.Row === rowIndex) && (condition.sectionKey === sectionKey));
                 if (!conditionExists) {
-                  return [
-                    ...updatedConditions,
-                    {
-                      [updateKey]: updateValue,
-                        Row: rowIndex,
-                        sectionKey: sectionKey
-                    }
-                  ];
+                    return [
+                        ...updatedConditions,
+                        {
+                            [updateKey]: updateValue,
+                            Row: rowIndex,
+                            sectionKey: sectionKey
+                        }
+                    ];
                 } else {
-                  return updatedConditions;
+                    return updatedConditions;
                 }
-              });
-        }
-      
-      };
-      
-
-
-    const handleDeleteRow = (index: number) => {
-        if (rows && rows.length >= 2) {
-            const updatedRows = [...rows];
-            updatedRows.splice(index, 1);
-            setRows(updatedRows);
+            });
         }
 
     };
+
+
+
+    const handleDeleteRow = (keyToDelete: number) => {
+        console.log("KEY RO DELETE", rows)
+
+        // setRows(prevRows => {
+        //     const filteredRows = prevRows.filter(row => row.key !== keyToDelete);
+        //     console.log("KEY RO DELETE 1", filteredRows)
+        //     return filteredRows;
+        // });
+        setRows(prevRows => {
+            const filteredRows = prevRows.filter(row => row.key !== keyToDelete);
+            const updatedRows = filteredRows.map((row, index) => ({
+              ...row,
+              key: prevRows[index].key // Update the key of each remaining row based on the original index
+            }));
+            return filteredRows;
+        })        
+    };
+
+    useEffect(() => {
+        console.log("ROSSSSSS", rows);
+    }, [removeRow]);
 
     const handleCheckboxClick = (index: number) => {
         console.log("Checkbox Clicked ", index)
@@ -183,56 +197,56 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
 
     useEffect(() => {
         if (sampleObj && sampleObj[0] && sampleObj[0]["if"]) {
-          sampleObj[0]["if"].conditions.forEach((x: any) => {
-            setRows(prevRows => [
-              ...prevRows,
-              {
-                column1: '',
-                column2: '',
-                column3: '',
-                column4: '',
-                column5: '',
-                column6: '',
-                key: x.Row
-              }
-            ]);
-          });
+            sampleObj[0]["if"].conditions.forEach((x: any) => {
+                setRows(prevRows => [
+                    ...prevRows,
+                    {
+                        column1: '',
+                        column2: '',
+                        column3: '',
+                        column4: '',
+                        column5: '',
+                        column6: '',
+                        key: x.Row
+                    }
+                ]);
+            });
         }
 
     }, [sampleObj])
 
     // useEffect(() => {
     //     console.log("setMinMaxValuessetMinMaxValues", minMaxValues)
-       
+
     // }, [minMaxValues])
 
     const onToggleValueChanged = (value: any) => {
         setToggleEnabled(value)
     }
     const handleMinValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Number(e); 
+        const value = Number(e);
         setSectionKey(sectionKey);
         setMinMaxValue((prevState) => {
             return {
-              ...prevState,
-              minValue: value,
-              sectionKey: sectionKey
+                ...prevState,
+                minValue: value,
+                sectionKey: sectionKey
             };
-          });
-      };
-    
+        });
+    };
+
     const handleMaxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Number(e);
         setSectionKey(sectionKey);
         setMinMaxValue((prevState) => {
             return {
-              ...prevState,
-              maxValue: value,
-              sectionKey: sectionKey
+                ...prevState,
+                maxValue: value,
+                sectionKey: sectionKey
             };
-          });
-      };
-    
+        });
+    };
+
     useEffect(() => {
         setSectionKey(sectionKey);
         setMinMaxValue((prevState) => {
@@ -263,7 +277,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                     <div className='tableComponent'>
 
                         {
-                            finalOutput && finalOutput.length && <div style={{ textAlign: "left"}}>{"if("}{finalOutput.map((quesOutput, index) => {
+                            finalOutput && finalOutput.length && <div style={{ textAlign: "left" }}>{"if("}{finalOutput.map((quesOutput, index) => {
                                 if (quesOutput?.question) {
                                     return `${quesOutput?.question} ${quesOutput?.expression || ''} ${quesOutput?.answerType || ''} ${finalOutput[index + 1]?.operation || ''} `
                                 }
@@ -287,9 +301,9 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                                     <tbody>
                                         {rows.map((row, index) => (
                                             <TableRow
-                                                key={index+1}
+                                                key={row.key}
                                                 row={row}
-                                                index={index+1}
+                                                index={row.key}
                                                 setRowKey={setRowKey}
                                                 handleInputChange={handleInputChange}
                                                 onQuestionChanged={setQuestion}
@@ -300,6 +314,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                                                 handleDeleteRow={handleDeleteRow}
                                                 handleCheckboxClick={handleCheckboxClick}
                                                 sampleObjData={sampleObj && sampleObj[0] && sampleObj[0]["if"].conditions.find((item: any) => item.Row === row.key) || {}}
+                                                questionList={questionList}
                                             />
                                         ))}
                                     </tbody>
@@ -308,63 +323,68 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                             </div>
                         </div>
                     </div>
-                    <div className='actionfields'>
+                    <div className='actionfields' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         <div style={{ marginTop: "5%", textAlign: "left" }}>
-                            <div>Actions</div>
-                            <div>
+                            <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Actions</div>
+                            <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px' }}>
                                 <CheckBox
                                     setCheckboxValues={setIfConditionActions}
                                     checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions || []}
-                                    />
+                                />
                             </div>
-                            <div>Min/Max Field
+                        </div>
+                        <div style={{ marginTop: "5%", textAlign: "left" }}>
+                            <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Min/Max Field</div>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                                <div style={{ marginRight: '10px' }}>Min/Max Value:</div>
                                 <Switch
                                     className="custom-toggle"
                                     checkedChildren="Min Max Value"
-                                    unCheckedChildren="Quesion Name"
+                                    unCheckedChildren="Question Name"
                                     onChange={onToggleValueChanged}
-                                    />
+                                />
                             </div>
                             {
                                 toggleEnabled ?
-                                    <div className='' style={{ textAlign: "left" }}>
-                                        <div>
-                                            Min Value: <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
-                                        </div>
-                                        <div>
-                                            Max Value: <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
-                                        </div>
+                                    <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
+                                        <div style={{ width: '200px', marginRight: '10px' }}>Min Value:</div>
+                                        <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
                                     </div>
                                     :
-                                    <div className='' style={{ textAlign: "left" }}>
-                                        <div>
-                                            Min Value:
-                                            <DropDown
-                                                sampleData={operationsSampleData}
-                                                onSelectItem={setMinQuestionValue}
-                                                selectedValue={""}
-                                            />
-                                        </div>
-                                        <div>
-                                            Max Value:
-                                            <DropDown
-                                                sampleData={operationsSampleData}
-                                                onSelectItem={setMaxQuestionValue}
-                                                selectedValue={""}
-                                            />
-                                        </div>
-                                </div>
+                                    <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
+                                        <div style={{ width: '200px', marginRight: '10px' }}>Min Value:</div>
+                                        <DropDown
+                                            sampleData={questionList}
+                                            onSelectItem={setMinQuestionValue}
+                                            selectedValue={""}
+                                        />
+                                    </div>
                             }
-                           
-                            </div>
-                            
+                            {
+                                toggleEnabled ?
+                                    <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
+                                        <div style={{ width: '200px', marginRight: '10px' }}>Max Value:</div>
+                                        <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
+                                    </div>
+                                    :
+                                    <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
+                                        <div style={{ width: '200px', marginRight: '10px' }}>Max Value:</div>
+                                        <DropDown
+                                            sampleData={questionList}
+                                            onSelectItem={setMaxQuestionValue}
+                                            selectedValue={""}
+                                        />
+                                    </div>
+                            }
                         </div>
                     </div>
 
-                    <div>
-                    </div>
+                </div>
+
+                <div>
                 </div>
             </div>
+        </div>
     )
 }
 

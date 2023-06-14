@@ -15,7 +15,7 @@ type MinMaxFieldValues = {
     sectionKey: any,
     questionName: any
 };
-  
+
 const ParentComponent: React.FC = () => {
     const [sectionOutput, setSectionOutput] = useState<any[]>([]);
     const [elseAction, setElseAction] = useState<any[]>([]);
@@ -111,13 +111,14 @@ const ParentComponent: React.FC = () => {
     const [toggleEnabled, setToggleEnabled] = useState(false);
     const [minMaxValue, setMinMaxValue] = useState<MinMaxFieldValues>({
         minValue: null,
-        maxValue:  null,
+        maxValue: null,
         sectionKey: null,
         questionName: null
     });
     const [minQuestionValue, setMinQuestionValue] = useState<any | null>(null);
     const [maxQuestionValue, setMaxQuestionValue] = useState<any | null>(null);
     const [elseShowOutput, setElseShowOutput] = useState<any[]>([]);
+    const [questionList, setQuestionList] = useState<any[]>([]);
 
     let handleAddSection = () => {
         const newKey = Math.round(Math.random() * 10000);
@@ -132,8 +133,18 @@ const ParentComponent: React.FC = () => {
 
     const loadQuestionHandler = async () => {
         const result = await loadAllQuestionsInSurvey();
-        // set result.data to a state
-    };
+        let questionListArray = result.data || [];
+        // Check if 'result.data' exists and has 'entities' property
+        if (questionListArray && questionListArray.length) {
+            const formattedQuestionList = questionListArray.map((quesNme:any) => {
+                return { label: quesNme.gyde_name, value: quesNme.gyde_name, questionType: 'numeric'}
+            })
+            formattedQuestionList && formattedQuestionList.length && setQuestionList(formattedQuestionList);
+        } else {
+          // Handle the case when 'entities' property is not present
+          setQuestionList([]);
+        }
+      };
 
     useEffect(() => {
         loadQuestionHandler();
@@ -182,10 +193,8 @@ const ParentComponent: React.FC = () => {
             ],
         };
         console.log("transformedData", transformedData);
-  
+
         setConditionData(prevRowData => {
-            console.log("prevRowData", prevRowData)
-      
             const updatedRowData = prevRowData.map(secData => {
                 if (secData.index === sectionKey) {
                     return {
@@ -202,12 +211,12 @@ const ParentComponent: React.FC = () => {
                 return [...updatedRowData, transformedData];
             }
         });
-      
+
         const _transformedData = {
             ifConditions: conditionData,
             elseConditions: [{ conditions: [], actions: elseActionCheckboxValues, minMax: minMaxValue }],
         };
-    
+
         setJsonArrayFormat(() => _transformedData);
 
     }, [rowData,
@@ -216,8 +225,8 @@ const ParentComponent: React.FC = () => {
         sectionKey,
         minMaxValue,
         sectionMinMaxFieldValues]);
-  
-    
+
+
     useEffect(() => {
         console.log("conditionData 2", conditionData)
         const indexes = conditionData.map(x => x.index);
@@ -233,24 +242,16 @@ const ParentComponent: React.FC = () => {
                 let ifConditionActionArray = releventDta[0].blocks[0].if?.actions || [];
                 let ifConditionMinMaxObj = releventDta[0].blocks[0].if?.minMax || {};
                 let result = [];
-               
-
-                // if ((elseSection && elseSection.length) || (elseSectionMinMax?.minValue && elseSectionMinMax?.maxValue)) {
-                //     result = `${elseSection.join("&&")}&&min=${elseSectionMinMax.minValue}&&max=${elseSectionMinMax.maxValue}`;
-                // }
-                
                 if (ifConditionMinMaxObj.minValue) {
                     result.push(`min=${ifConditionMinMaxObj.minValue}`)
-                  }
-                  
-                  if (ifConditionMinMaxObj.maxValue) {
+                }
+                if (ifConditionMinMaxObj.maxValue) {
                     result.push(`max=${ifConditionMinMaxObj.maxValue}`)
-                  }
-                //   result += `min=${elseSectionMinMax.minValue}&&max=${elseSectionMinMax.maxValue}`;
+                }
                 console.log("ifConditionActionArray", ifConditionActionArray);
                 let mergedArray = [...ifConditionActionArray, ...result].join("&&")
                 setElseShowOutput([mergedArray])
-                
+
                 console.log("elseShowOutput", elseShowOutput);
 
 
@@ -260,7 +261,7 @@ const ParentComponent: React.FC = () => {
                     // operatorString = operation
                     return `${question || ''} ${expression || ''} ${answerType || ''} ${ifConditionArray[index + 1]?.operation || ''}`;
                 });
-          
+
                 expressionArray.push({ expressions: `${expressions}`, actions: mergedArray || [] })
                 setShowOutput(expressionArray)
             }
@@ -268,11 +269,9 @@ const ParentComponent: React.FC = () => {
 
 
     }, [conditionData])
-    
+
     const onActionCheckboxChanged = (e: CheckboxChangeEvent) => {
-        console.log(`checked = ${e.target.checked}`);
         setEnableActionField(!enableActionField);
-    
     };
     useEffect(() => {
         if (sampleData?.elseConditions?.actions?.length) setEnableActionField(true)
@@ -285,51 +284,42 @@ const ParentComponent: React.FC = () => {
         console.log("elseSectionMinMax", elseSectionMinMax);
         console.log("elseSection", elseSection);
         let result = []
-        // if ((elseSection && elseSection.length) || (elseSectionMinMax?.minValue && elseSectionMinMax?.maxValue)) {
-        //     result = `${elseSection.join("&&")}&&min=${elseSectionMinMax.minValue}&&max=${elseSectionMinMax.maxValue}`;
-        // }
-        
         if (elseSectionMinMax.minValue) {
             result.push(`min=${elseSectionMinMax.minValue}`)
-          }
-          
-          if (elseSectionMinMax.maxValue) {
+        }
+
+        if (elseSectionMinMax.maxValue) {
             result.push(`max=${elseSectionMinMax.maxValue}`)
-          }
-        //   result += `min=${elseSectionMinMax.minValue}&&max=${elseSectionMinMax.maxValue}`;
+        }
         console.log("resultresult", elseSection);
         let mergedArray = [...elseSection, ...result].join("&&")
         setElseShowOutput([mergedArray])
-        
+
         console.log("elseShowOutput", elseShowOutput);
-   
+
     }, [jsonArrayFormat])
 
     const handleMinValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Number(e);                
+        const value = Number(e);
         setMinMaxValue((prevState) => {
             return {
-              ...prevState,
-              minValue: value,
-              sectionKey: sectionKey
+                ...prevState,
+                minValue: value,
+                sectionKey: sectionKey
             };
-          });
-      };
-    
-    const handleMaxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = Number(e);                
-        setMinMaxValue((prevState) => {
-            return {
-              ...prevState,
-              maxValue: value,
-              sectionKey: sectionKey
-            };
-          });
-      };
+        });
+    };
 
-    useEffect(() => {
-        console.log("minMaxValueminMaxValue", minMaxValue)
-    }, [minMaxValue])
+    const handleMaxValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e);
+        setMinMaxValue((prevState) => {
+            return {
+                ...prevState,
+                maxValue: value,
+                sectionKey: sectionKey
+            };
+        });
+    };
 
     useEffect(() => {
         setMinMaxValue((prevState) => {
@@ -344,114 +334,122 @@ const ParentComponent: React.FC = () => {
     const onToggleValueChanged = (value: any) => {
         setToggleEnabled(value)
     }
-  return (
-    <div>
-        <div className="displayText" style={{textAlign: "left", padding: "2%", border: "ridge", backgroundColor: "#D3D3D3" }}>
-              <DisplayText fieldOutputData={[]} />
-              {
-                  showOutput && showOutput.length>0 && showOutput.map(x => {
-                      return (
-                          <div>
-                              <div> {`if(${x.expressions})`} {`{ ${x.actions} }`}</div>
-                          </div>
-                       
-                    )
-                })
-              }
-             {
-                elseShowOutput && elseShowOutput.length > 0 && elseShowOutput.map(x => {
-                    console.log("DFFFFdddd", x);
-                    return (
-                    <div>
-                            <div> {`else{${x}}`}</div>
-                    </div>
-                    );
-                })
-            }
-        </div>
+    return (
+        <div>
+            <div className="displayText" style={{ textAlign: "left", padding: "2%", border: "ridge", backgroundColor: "#D3D3D3" }}>
+                <DisplayText fieldOutputData={[]} />
+                {
+                    showOutput && showOutput.length > 0 && showOutput.map(x => {
+                        return (
+                            <div>
+                                <div> {`if(${x.expressions})`} {`{ ${x.actions} }`}</div>
+                            </div>
+
+                        )
+                    })
+                }
+                {
+                    elseShowOutput && elseShowOutput.length > 0 && elseShowOutput.map(x => {
+                        console.log("DFFFFdddd", x);
+                        return (
+                            <div>
+                                <div> {`else{${x}}`}</div>
+                            </div>
+                        );
+                    })
+                }
+            </div>
             {sections.map((section) => (
-                <div key={section.key} style={{border: "ridge"}}>
-                        <div>
-                            <SectionComponent
-                                sectionKey={section.key}
-                                setSectionOutput={setSectionOutput}
-                                setRowKey={setRowKey}
-                                setSectionKey={setSectionKey}
-                                sampleObj={sampleData?.ifConditions?.find((item: any) => item.index === section.key)?.blocks || []}
-                                setRowData={setRowData}
-                                setCheckboxValues={setCheckboxValues}
-                                setSectionMinMaxFieldValues={setSectionMinMaxFieldValues}
-                            />
-                        </div>
+                <div key={section.key} style={{ border: "ridge" }}>
+                    <div>
+                        <SectionComponent
+                            sectionKey={section.key}
+                            setSectionOutput={setSectionOutput}
+                            setRowKey={setRowKey}
+                            setSectionKey={setSectionKey}
+                            sampleObj={sampleData?.ifConditions?.find((item: any) => item.index === section.key)?.blocks || []}
+                            setRowData={setRowData}
+                            setCheckboxValues={setCheckboxValues}
+                            setSectionMinMaxFieldValues={setSectionMinMaxFieldValues}
+                            questionList={questionList}
+                        />
+                    </div>
                     <div>
                         <Button onClick={() => handleRemoveSection(section.key)}>Remove Clause</Button>
                     </div>
-                    
+
                 </div>
             ))}
-          <Button onClick={handleAddSection}>Add New Clause</Button>
-          <div className='else-actions'>
-                            <div className='' style={{ textAlign: "left" }}>
-                                <Checkbox
-                                    onChange={onActionCheckboxChanged}
-                                    defaultChecked={sampleData?.elseConditions?.actions?.length}
-                                /> Else actions
-                            </div>
-                                {
-                                    enableActionField ?
-                                        <div style={{ textAlign: "left" }}>
-                                            <div>
-                                                <CheckBox
-                                                    setCheckboxValues={setElseActionCheckboxValues}
-                                                    checkboxDefaultSelectedValues={sampleData?.elseConditions?.actions || []}
-                                                />
-                                            </div>
-                                    </div> : <div></div>
-                                }
-                            </div>
-                            <div>
-                            <div>Min/Max Field
-                                <Switch
-                                    className="custom-toggle"
-                                    checkedChildren="Min Max Value"
-                                    unCheckedChildren="Quesion Name"
-                                    onChange={onToggleValueChanged}
-                                    />
-              </div>
-              
-              {
-                                toggleEnabled ?
-                                    <div className='' style={{ textAlign: "left" }}>
-                                        <div>
-                                            Min Value: <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
-                                        </div>
-                                        <div>
-                                            Max Value: <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
-                                        </div>
-                                    </div>
-                                    :
-                                    <div className='' style={{ textAlign: "left" }}>
-                                        <div>
-                                            Min Value:
-                                            <DropDown
-                                                sampleData={operationsSampleData}
-                                                onSelectItem={setMinQuestionValue}
-                                                selectedValue={""}
-                                            />
-                                        </div>
-                                        <div>
-                                            Max Value:
-                                            <DropDown
-                                                sampleData={operationsSampleData}
-                                                onSelectItem={setMaxQuestionValue}
-                                                selectedValue={""}
-                                            />
-                                        </div>
-                                </div>
+            <Button onClick={handleAddSection}>Add New Clause</Button>
+            <div className='else-actions'>
+                <div className='' style={{ textAlign: "left" }}>
+
+
+                    <div style={{ marginTop: "5%", textAlign: "left" }}>
+                        <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+                            <Checkbox
+                                onChange={onActionCheckboxChanged}
+                                defaultChecked={sampleData?.elseConditions?.actions?.length}
+                            />
+                            Else actions</div>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px' }}>
+                            {
+                                enableActionField ? <div>
+                                    <CheckBox
+                                        setCheckboxValues={setElseActionCheckboxValues}
+                                        checkboxDefaultSelectedValues={sampleData?.elseConditions?.actions || []}
+                                    /> </div> : <div></div>
                             }
-          </div>
-    </div>
-  );
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style={{ marginTop: "5%", textAlign: "left" }}>
+                <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Min/Max Field</div>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ marginRight: '10px' }}>Min/Max Value:</div>
+                    <Switch
+                        className="custom-toggle"
+                        checkedChildren="Min Max Value"
+                        unCheckedChildren="Quesion Name"
+                        onChange={onToggleValueChanged}
+                    />
+                </div>
+                {
+                    toggleEnabled ?
+                        <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
+                            <div style={{ width: '200px', marginRight: '10px' }}>Min Value:</div>
+                            <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
+                        </div>
+                        :
+                        <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
+                            <div style={{ width: '200px', marginRight: '10px' }}>Min Value:</div>
+                            <DropDown
+                                sampleData={operationsSampleData}
+                                onSelectItem={setMinQuestionValue}
+                                selectedValue={""}
+                            />
+                        </div>
+                }
+                {
+                    toggleEnabled ?
+                        <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
+                            <div style={{ width: '200px', marginRight: '10px' }}>Max Value:</div>
+                            <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
+                        </div>
+                        :
+                        <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
+                            <div style={{ width: '200px', marginRight: '10px' }}>Max Value:</div>
+                            <DropDown
+                                sampleData={operationsSampleData}
+                                onSelectItem={setMaxQuestionValue}
+                                selectedValue={""}
+                            />
+                        </div>
+                }
+            </div>
+        </div>
+    );
 };
 
 export default ParentComponent;

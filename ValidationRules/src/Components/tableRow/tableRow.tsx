@@ -30,7 +30,8 @@ interface TableRowProps {
     handleDeleteRow: (index: number) => void;
     handleCheckboxClick: (index: number) => void;
     setRowKey: any,
-    sampleObjData: any
+    sampleObjData: any,
+    questionList: any
 }
 
 function TableRow({
@@ -45,7 +46,8 @@ function TableRow({
     handleDeleteRow,
     handleCheckboxClick,
     setRowKey,
-    sampleObjData
+    sampleObjData,
+    questionList
 }: TableRowProps) {
 
     const [selectedQuestion, setSelectedQuestion] = useState<any | null>(null);
@@ -93,13 +95,16 @@ function TableRow({
         handleInputChange(index, { answerType: inputvalue })
     }, [inputvalue])
     
+    useEffect(() => {
+        console.log("FFHHHHH", questionList)
+    }, [questionList])
     return (
         <tr>
             <td>
                 <Checkbox value={index} onClick={() => handleCheckboxClick(index)} />
             </td>
             {
-                index !== 1 ? (
+                index !== 0 ? (
                     <td>
                         <DropDown
                             sampleData={operationsSampleData}
@@ -114,7 +119,7 @@ function TableRow({
             }
             <td>
                 <SearchWithSort
-                    sampleData={sampleInputQuestion}
+                    sampleData={questionList}
                     onSelectItem={setSelectedQuestion}
                     selectedValue={sampleObjData?.Field || ""}
                 />
