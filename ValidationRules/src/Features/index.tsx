@@ -9,6 +9,7 @@ import NumberInputField from '../Components/numberInput/numberInput';
 import DropDown from '../Components/dropDown/dropDown';
 import operationsSampleData from '../SampleData/sampleInputQuestion';
 import configs from '../configs/actionMapper';
+import sampleOutputFile from '../SampleData/SampleOutputData';
 
 type MinMaxFieldValues = {
     minValue: any,
@@ -23,78 +24,7 @@ const ParentComponent: React.FC = () => {
     const [mappedElseActionCheckboxValues, setMappedElseActionCheckboxValues] = useState<any[]>([]);
     const [sectionKey, setSectionKey] = useState<any>(1);
     const [rowKey, setRowKey] = useState<any>();
-    const [sampleData, setSampleData] = useState<any>({
-        // ifConditions: [
-        //     {
-        //         index: 1,
-        //         blocks: [
-        //             {
-        //                 if: {
-        //                     conditions: [
-        //                         {
-        //                             Row: 3,
-        //                             expression: 'isEqualTo',
-        //                             Field: 'Question01',
-        //                             Operator: '&&',
-        //                             Value: 'String01',
-        //                         },
-        //                         {
-        //                             Row: 4,
-        //                             expression: 'graterThan',
-        //                             Field: 'Question02',
-        //                             Operator: '||',
-        //                             Value: 'String01',
-        //                         }
-        //                     ],
-        //                     actions: ['show', 'hide'],
-        //                     minMax: {
-        //                         min: 123,
-        //                         max: 234,
-        //                         value: 'Question01' // This is optional
-        //                     }
-        //                 },
-        //             },
-        //         ],
-        //     },
-        //     {
-        //         index: 2,
-        //         blocks: [
-        //             {
-        //                 if: {
-        //                     conditions: [
-        //                         {
-        //                             Row: 10,
-        //                             expression: 'LowerThan',
-        //                             Field: 'Question03',
-        //                             Operator: '',
-        //                             Value: 'String01',
-        //                         },
-        //                         {
-        //                             Row: 11,
-        //                             expression: 'LowerThan',
-        //                             Field: 'Question03',
-        //                             Operator: '&&',
-        //                             Value: 'String01',
-        //                         },
-        //                         {
-        //                             Row: 13,
-        //                             expression: 'LowerThan',
-        //                             Field: 'Question03',
-        //                             Operator: '&&',
-        //                             Value: 'String01',
-        //                         }
-        //                     ],
-        //                     actions: ['show', 'hideAndOutput'],
-        //                 },
-        //             },
-        //         ],
-        //     },
-        // ],
-        // elseConditions: [{
-        //     conditions: [],
-        //     actions: ['disable', 'show'],
-        //   }],
-    });
+    const [sampleData, setSampleData] = useState<any>(sampleOutputFile);
     const [sections, setSections] = useState<{ key: number }[]>(sampleData?.ifConditions?.length ? sampleData?.ifConditions.map((_: any) => ({ key: _.index })) : [{ key: 1 }]);
     const [rowData, setRowData] = useState<any[]>([]);
     const [conditionData, setConditionData] = useState<any[]>([]);
@@ -152,9 +82,9 @@ const ParentComponent: React.FC = () => {
     
     const _getCurrentState = async () => {
         const result = await getCurrentState();
-        console.log("configs['queston_actions']", configs['queston_actions'])
-        if (result.data.includes('queston')) {
-            setActionList(configs['queston_actions']['actions'])
+        console.log("configs['queston_actions']", configs['question_actions'])
+        if (result.data.includes('question')) {
+            setActionList(configs['question_actions']['actions'])
         } else if (result.data.includes('section')) {
             setActionList(configs['section_actions']['actions'])
         } else if (result.data.includes('chapter')) {
