@@ -29,6 +29,9 @@ interface TableRowProps {
     onOperationChanged: (selectedItem: string) => void;
     handleDeleteRow: (index: number) => void;
     handleCheckboxClick: (index: number) => void;
+    setRowKey: any,
+    sampleObjData: any,
+    questionList: any
 }
 
 function TableRow({
@@ -41,7 +44,10 @@ function TableRow({
     onOperationChanged,
     handleInputChange,
     handleDeleteRow,
-    handleCheckboxClick
+    handleCheckboxClick,
+    setRowKey,
+    sampleObjData,
+    questionList
 }: TableRowProps) {
 
     const [selectedQuestion, setSelectedQuestion] = useState<any | null>(null);
@@ -53,32 +59,30 @@ function TableRow({
 
     useEffect(() => {
         if (selectedQuestion) onQuestionChanged(selectedQuestion?.value);
+        console.log("selectedQuestionselectedQuestion", selectedQuestion)
         handleInputChange(index, { question: selectedQuestion?.value })
-
     }, [selectedQuestion])
 
     useEffect(() => {
         if (selectedExpression) onExpressionChanged(selectedExpression?.value);
         handleInputChange(index, { expression: selectedExpression?.value })
-
     }, [selectedExpression])
 
     useEffect(() => {
         if (selectedAnswerType) onAnswerTypeChanged(selectedAnswerType?.value);
         handleInputChange(index, { answerType: selectedAnswerType?.value })
-
     }, [selectedAnswerType])
 
     useEffect(() => {
         if (selectedOperations) onOperationChanged(selectedOperations?.value);
         handleInputChange(index, { operation: selectedOperations?.value })
-
+        
     }, [selectedOperations])
 
     useEffect(() => {
         if (selectedShowHide) onShowHideChanged(selectedShowHide?.value);
         handleInputChange(index, { showhide: selectedShowHide?.value })
-
+       
     }, [selectedShowHide])
 
     const handleInputTextChanged = (value: any) => {
@@ -90,7 +94,10 @@ function TableRow({
         onAnswerTypeChanged(inputvalue)
         handleInputChange(index, { answerType: inputvalue })
     }, [inputvalue])
-
+    
+    useEffect(() => {
+        console.log("FFHHHHH", questionList)
+    }, [questionList])
     return (
         <tr>
             <td>
@@ -99,32 +106,41 @@ function TableRow({
             {
                 index !== 0 ? (
                     <td>
-                        <DropDown sampleData={operationsSampleData} onSelectItem={setSelectedOperations} />
+                        <DropDown
+                            sampleData={operationsSampleData}
+                            onSelectItem={setSelectedOperations}
+                            selectedValue={sampleObjData?.Operator || ""}
+                        />
                     </td>
                 ) :
-                    <td></td>
+                    <td>
+
+                    </td>
             }
             <td>
                 <SearchWithSort
-                    sampleData={sampleInputQuestion}
+                    sampleData={questionList}
                     onSelectItem={setSelectedQuestion}
+                    selectedValue={sampleObjData?.Field || ""}
                 />
             </td>
             <td>
                 <DropDown
                     sampleData={expressionSampleData}
                     onSelectItem={setSelectedExpression}
+                    selectedValue={sampleObjData?.expression || ""}
                 />
             </td>
             <td>
                 {
                     selectedQuestion && selectedQuestion?.questionType === 'text' ?
-                        <Input value={inputvalue} onChange={(e) => setInputvalue(e.target.value)} /> :
+                        <Input value={inputvalue} onChange={(e) => setInputvalue(e.target.value)} defaultValue={sampleObjData?.Value}/> :
                         selectedQuestion && selectedQuestion?.questionType === 'numeric' ?
                             <InputNumber onChange={(value) => handleInputTextChanged(value)} /> :
                             <DropDown
                                 sampleData={expressionSampleData}
                                 onSelectItem={setSelectedAnswerType}
+                                selectedValue={sampleObjData?.Value || ""}
                             />
                 }
             </td>

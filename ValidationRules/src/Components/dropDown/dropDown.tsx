@@ -6,13 +6,10 @@ import sample_questions from "../../SampleData/sampleInputQuestion";
 interface SearchSortProps {
     sampleData: any[];
     onSelectItem: (selectedItem: string) => void;
+    selectedValue: any
 }
   
-const FieldInput: React.FC<SearchSortProps> = ({sampleData, onSelectItem}) => {
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
-    useEffect(() => {
-        console.log(sampleData)
-    })
+const FieldInput: React.FC<SearchSortProps> = ({sampleData, onSelectItem, selectedValue}) => {
     return (
         <div>
             <Select
@@ -28,6 +25,7 @@ const FieldInput: React.FC<SearchSortProps> = ({sampleData, onSelectItem}) => {
                 }
                 onChange={(input, option) => onSelectItem(option)}
                 options={sampleData}
+                defaultValue={selectedValue}
             />
         </div>
 

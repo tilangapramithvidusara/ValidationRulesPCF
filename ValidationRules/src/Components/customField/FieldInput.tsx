@@ -6,22 +6,27 @@ import sample_questions from "../../SampleData/sampleInputQuestion";
 const handleChange = (value: string) => {
     console.log(`selected ${value}`);
 };
-
-const FieldInput = (props: any) => {
-    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+interface FieldInputprops {
+    itemsList: any;
+  }
+  
+  function FieldInput({
+      itemsList
+  }: FieldInputprops) {
+    const [items, setItems] = useState<any[]>([]);
     useEffect(() => {
-        console.log(props)
-    })
+        setItems(itemsList)
+    }, [itemsList])
     return (
         <div>
             <Select
                 defaultValue="Chapter 01"
                 style={{ width: 200 }}
                 onChange={handleChange}
-                options={sample_questions}
+                options={items}
 
             />
-            <Select
+            {/* <Select
                 showSearch
                 style={{
                     width: 200,
@@ -33,7 +38,7 @@ const FieldInput = (props: any) => {
                     (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
                 }
                 options={expressionSampleData}
-            />
+            /> */}
         </div>
 
     )
