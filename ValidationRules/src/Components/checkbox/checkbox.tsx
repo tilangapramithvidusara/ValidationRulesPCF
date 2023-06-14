@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Checkbox, Col, Row } from 'antd';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 
 interface CheckBoxProps {
   setCheckboxValues: (selectedItem: CheckboxValueType[]) => void;
-    checkboxDefaultSelectedValues: any,
+  checkboxDefaultSelectedValues: any,
+  checkboxValuesFromConfig: any
 }
 
 function CheckBox({
   setCheckboxValues,
-    checkboxDefaultSelectedValues
+  checkboxDefaultSelectedValues,
+  checkboxValuesFromConfig
 }: CheckBoxProps) {
   const onChange = (checkedValues: CheckboxValueType[]) => {
-    console.log("EFEFEFE", checkedValues);
     setCheckboxValues(checkedValues || []);
   };
+
+  useEffect(() => {
+    console.log("checkboxValuesFromConfig", checkboxValuesFromConfig)
+  }, [checkboxValuesFromConfig])
 
   return (
     <Checkbox.Group
@@ -22,36 +27,15 @@ function CheckBox({
       onChange={onChange}
       defaultValue={checkboxDefaultSelectedValues}
     >
-      <Row>
-        <Col span={8}>
-          <Checkbox value="disable"> Disable</Checkbox>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={8}>
-          <Checkbox value="enable">Enable</Checkbox>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={8}>
-          <Checkbox value="hide">Hide</Checkbox>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={8}>
-          <Checkbox value="hideAndOutput">Hide in output document</Checkbox>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={8}>
-          <Checkbox value="show">Show</Checkbox>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={8}>
-          <Checkbox value="showAndOutput">Show in output document</Checkbox>
-        </Col>
-      </Row>
+      {
+        checkboxValuesFromConfig && checkboxValuesFromConfig.length && checkboxValuesFromConfig.map((configAction: any) => (
+          <Row>
+            <Col span={8}>
+              <Checkbox value={configAction.value}> {configAction.displayName}</Checkbox>
+            </Col>
+        </Row>
+        ))
+      }
     </Checkbox.Group>
   );
 }
