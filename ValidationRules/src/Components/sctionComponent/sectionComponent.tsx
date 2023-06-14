@@ -23,11 +23,11 @@ interface Row {
 
 interface Item {
     index: any;
-    question: any;
-    expression: any;
-    operation: any;
+    Field: any;
+    Expression: any;
+    Operator: any;
     showhide: any;
-    answerType: any;
+    AnswerType: any;
 }
 
 interface SectionComponentProps {
@@ -68,15 +68,17 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     actionList
 }) => {
     const initialCheckboxState: CheckboxState = {};
-    const [rows, setRows] = useState<Row[]>([{
-        key: 0,
-        column1: '',
-        column2: '',
-        column3: '',
-        column4: '',
-        column5: '',
-        column6: ''
-    }]);
+    const [rows, setRows] = useState<Row[]>([
+        // {
+        // key: 0,
+        // column1: '',
+        // column2: '',
+        // column3: '',
+        // column4: '',
+        // column5: '',
+        // column6: ''
+        // }
+    ]);
     const [question, setQuestion] = useState<string | null>(null);
     const [expression, setExpression] = useState<string | null>(null);
     const [operation, setOperation] = useState<string | null>(null);
@@ -120,11 +122,11 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
 
         const newItem: Item = {
             index: index,
-            question: question,
-            expression: expression,
-            operation: operation,
+            Field: question,
+            Expression: expression,
+            Operator: operation,
             showhide: showhide,
-            answerType: answerType
+            AnswerType: answerType
         };
         console.log("finalOutput", finalOutput)
 
@@ -200,14 +202,27 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     };
 
     useEffect(() => {
-        console.log("ROSSSSSS", rows);
-    }, [removeRow]);
+        console.log("ROSSSSddddSS", rows);
+    }, [rows]);
 
     const handleCheckboxClick = (index: number) => {
         console.log("Checkbox Clicked ", index)
     }
 
     useEffect(() => {
+        console.log("DKJDJJD", sampleObj)
+        if (!sampleObj?.length) {
+            setRows([{
+                key: 0,
+                column1: '',
+                column2: '',
+                column3: '',
+                column4: '',
+                column5: '',
+            column6: ''
+        }]);
+        }
+
         if (sampleObj && sampleObj[0] && sampleObj[0]["if"]) {
             sampleObj[0]["if"].conditions.forEach((x: any) => {
                 setRows(prevRows => [
@@ -225,7 +240,9 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
             });
         }
 
-    }, [sampleObj])
+       
+
+    }, [])
 
     // useEffect(() => {
     //     console.log("setMinMaxValuessetMinMaxValues", minMaxValues)
@@ -288,8 +305,8 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
 
                         {
                             finalOutput && finalOutput.length && <div className='subTitle mb-15'>{"if("}{finalOutput.map((quesOutput, index) => {
-                                if (quesOutput?.question) {
-                                    return `${quesOutput?.question} ${quesOutput?.expression || ''} ${quesOutput?.answerType || ''} ${finalOutput[index + 1]?.operation || ''} `
+                                if (quesOutput?.Field) {
+                                    return `${quesOutput?.Field} ${quesOutput?.Expression || ''} ${quesOutput?.AnswerType || ''} ${finalOutput[index + 1]?.Operator || ''} `
                                 }
                             })}{"){"}
                                 {/* <div>{checkboxValues.map(val => (` ${val} &&`))}{`}`}</div> */}

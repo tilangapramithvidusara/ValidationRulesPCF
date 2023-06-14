@@ -60,22 +60,22 @@ function TableRow({
     useEffect(() => {
         if (selectedQuestion) onQuestionChanged(selectedQuestion?.value);
         console.log("selectedQuestionselectedQuestion", selectedQuestion)
-        handleInputChange(index, { question: selectedQuestion?.value })
+        handleInputChange(index, { Field: selectedQuestion?.value })
     }, [selectedQuestion])
 
     useEffect(() => {
         if (selectedExpression) onExpressionChanged(selectedExpression?.value);
-        handleInputChange(index, { expression: selectedExpression?.value })
+        handleInputChange(index, { Expression: selectedExpression?.value })
     }, [selectedExpression])
 
     useEffect(() => {
         if (selectedAnswerType) onAnswerTypeChanged(selectedAnswerType?.value);
-        handleInputChange(index, { answerType: selectedAnswerType?.value })
+        handleInputChange(index, { AnswerType: selectedAnswerType?.value })
     }, [selectedAnswerType])
 
     useEffect(() => {
         if (selectedOperations) onOperationChanged(selectedOperations?.value);
-        handleInputChange(index, { operation: selectedOperations?.value })
+        handleInputChange(index, { Operator: selectedOperations?.value })
         
     }, [selectedOperations])
 
@@ -87,17 +87,14 @@ function TableRow({
 
     const handleInputTextChanged = (value: any) => {
         onAnswerTypeChanged(value)
-        handleInputChange(index, { answerType: value })
+        handleInputChange(index, { AnswerType: value })
     }
 
     useEffect(() => {
         onAnswerTypeChanged(inputvalue)
-        handleInputChange(index, { answerType: inputvalue })
+        handleInputChange(index, { AnswerType: inputvalue })
     }, [inputvalue])
     
-    useEffect(() => {
-        console.log("FFHHHHH", questionList)
-    }, [questionList])
     return (
         <tr>
             <td>
@@ -128,7 +125,7 @@ function TableRow({
                 <DropDown
                     sampleData={expressionSampleData}
                     onSelectItem={setSelectedExpression}
-                    selectedValue={sampleObjData?.expression || ""}
+                    selectedValue={sampleObjData?.Expression || ""}
                 />
             </td>
             <td>

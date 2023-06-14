@@ -9,7 +9,8 @@ import NumberInputField from '../Components/numberInput/numberInput';
 import DropDown from '../Components/dropDown/dropDown';
 import operationsSampleData from '../SampleData/sampleInputQuestion';
 import configs from '../configs/actionMapper';
-import sampleOutputFile from '../SampleData/SampleOutputData';
+import sampleOutputData from '../SampleData/SampleOutputData';
+import utilHelper from '../utilHelper/utilHelper';
 // import removeIcon from '../assets/delete.png';
 
 type MinMaxFieldValues = {
@@ -25,7 +26,7 @@ const ParentComponent: React.FC = () => {
     const [mappedElseActionCheckboxValues, setMappedElseActionCheckboxValues] = useState<any[]>([]);
     const [sectionKey, setSectionKey] = useState<any>(1);
     const [rowKey, setRowKey] = useState<any>();
-    const [sampleData, setSampleData] = useState<any>(sampleOutputFile);
+    const [sampleData, setSampleData] = useState<any>();
     const [sections, setSections] = useState<{ key: number }[]>(sampleData?.ifConditions?.length ? sampleData?.ifConditions.map((_: any) => ({ key: _.index })) : [{ key: 1 }]);
     const [rowData, setRowData] = useState<any[]>([]);
     const [conditionData, setConditionData] = useState<any[]>([]);
@@ -96,9 +97,9 @@ const ParentComponent: React.FC = () => {
     }
 
     useEffect(() => {
-        console.log("ACTLIST", actionList);
+        console.log("ACTLIST", sampleData?.ifConditions);
 
-    }, [actionList])
+    }, [])
 
     useEffect(() => {
         loadQuestionHandler();
@@ -127,15 +128,25 @@ const ParentComponent: React.FC = () => {
     }, [elseAction, sectionKey]);
 
     useEffect(() => {
-        console.log("checkboxValuescheckboxValues 1", checkboxValues);
-        console.log("DJFEJFIEEF", sectionKey);
         rowData.sort((a, b) => a.Row - b.Row);
+        console.log("transformedData------->", sampleData?.ifConditions);
+        console.log("rowDatarowData------->", rowData);
+
+        let _setUpdatedRowData;
+        if (rowData?.length && sampleData?.ifConditions.length) {
+            _setUpdatedRowData = utilHelper(rowData, sampleData?.ifConditions, sectionKey);
+            console.log("DATAAAA", _setUpdatedRowData)
+        } else {
+            _setUpdatedRowData = rowData?.filter(rowDta => rowDta.sectionKey === sectionKey)
+        }
+
         const transformedData = {
             index: sectionKey,
             blocks: [
                 {
                     if: {
-                        conditions: rowData?.filter(rowDta => rowDta.sectionKey === sectionKey),
+                        // conditions: rowData?.filter(rowDta => rowDta.sectionKey === sectionKey),
+                        conditions: _setUpdatedRowData,
                         actions: checkboxValues || [],
                         minMax: sectionMinMaxFieldValues,
                     },
@@ -147,7 +158,6 @@ const ParentComponent: React.FC = () => {
                 },
             ],
         };
-        console.log("transformedData", transformedData);
 
         setConditionData(prevRowData => {
             const updatedRowData = prevRowData.map(secData => {
@@ -167,27 +177,37 @@ const ParentComponent: React.FC = () => {
             }
         });
 
+        console.log("conditionDataconditionData-----> ", conditionData);
+
         const _transformedData = {
             ifConditions: conditionData,
             elseConditions: [{ conditions: [], actions: elseActionCheckboxValues, minMax: minMaxValue }],
         };
 
         setJsonArrayFormat(() => _transformedData);
-
-    }, [rowData,
+    }, [
+        rowData,
         checkboxValues,
         elseActionCheckboxValues,
         sectionKey,
         minMaxValue,
-        sectionMinMaxFieldValues]);
+        sectionMinMaxFieldValues,
+        sampleData
+    ]);
 
+
+    // useEffect(() => {
+    //     if (Object.keys(sampleData).length !== 0)
+    //         setConditionData(sampleData?.ifConditions)
+    // }, [sampleData]);
 
     useEffect(() => {
         console.log("conditionData 2", conditionData)
         const indexes = conditionData.map(x => x.index);
         console.log("indexes indexes", indexes)
         console.log("indexes conditionData", conditionData)
-
+        
+            
         const expressionArray: React.SetStateAction<any[]> = [];
         //   let operatorString = "" 
         indexes.forEach(x => {
@@ -211,10 +231,10 @@ const ParentComponent: React.FC = () => {
 
 
                 console.log("ifConditionActionArray", result)
-                const expressions = ifConditionArray.map((condition: { Row: any; expression: any; question: any; operation: any; answerType: any; }, index: any) => {
-                    const { Row, expression, question, operation, answerType } = condition;
+                const expressions = ifConditionArray.map((condition: { Row: any; expression: any; Field: any; Operator: any; AnswerType: any; }, index: any) => {
+                    const { Row, expression, Field, Operator, AnswerType } = condition;
                     // operatorString = operation
-                    return `${question || ''} ${expression || ''} ${answerType || ''} ${ifConditionArray[index + 1]?.operation || ''}`;
+                    return `${Field || ''} ${expression || ''} ${AnswerType || ''} ${ifConditionArray[index + 1]?.Operator || ''}`;
                 });
 
                 expressionArray.push({ expressions: `${expressions}`, actions: mergedArray || [] })
