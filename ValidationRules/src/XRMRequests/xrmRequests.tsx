@@ -29,7 +29,7 @@ export const loadAllQuestionsInSurvey = async () => {
 }
 
 export const getCurrentState = async () => {
-  const type = 'gyde_surveytemplatechaptersectionauestion';
+  const type = 'gyde_surveytemplatechaptersectionquestion';
   try {    
     const result = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
     console.log("Current State ===========> ", result);

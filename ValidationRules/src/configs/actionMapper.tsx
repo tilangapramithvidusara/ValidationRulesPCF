@@ -1,6 +1,6 @@
 
 const actionMapper = {
-    queston_actions: {
+    question_actions: {
         actions: {
             if_actions: [
                 {
@@ -8,12 +8,16 @@ const actionMapper = {
                     value: 'disable'
                 },
                 {
-                    displayName: 'Hide',
-                    value: 'hide'
-                },
-                {
                     displayName: 'Enable',
                     value: 'enable'
+                },
+                {
+                    displayName: 'Show',
+                    value: 'show'
+                },
+                {
+                    displayName: 'Hide',
+                    value: 'hide'
                 }
         ],
         else_actions: [
@@ -22,8 +26,8 @@ const actionMapper = {
                 value: 'disable'
             },
             {
-                displayName: 'Hide',
-                value: 'hide'
+                displayName: 'Enable',
+                value: 'enable'
             }
         ]
         }
