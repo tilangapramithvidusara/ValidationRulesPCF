@@ -1,25 +1,110 @@
-.actionfields {
-    display: block;
-    text-align: left;
-    width: 50%;
-    padding: 2%;
-}
 
-.pcf-wrapper {
+  .pcf-wrapper {
     padding: 30px;
   }
 
   .pcf-wrapper .float-right {
     text-align: right;
   }
-
-  .custom-toggle {
-    & .ant-switch-checked {
-      background-color: #6c7986; /* Set the background color for the checked state */
-    }
-    
-    & .ant-switch-handle {
-      background-color: #4e4e4f; /* Set the background color for the switch handle */
-    }
+   
+  .custom-toggle.ant-switch-checked {
+    background-color: #6c7986; /* Set the background color for the checked state */
   }
   
+  .custom-toggle.ant-switch-handle {
+    background-color: #4e4e4f; /* Set the background color for the switch handle */
+  }
+  
+  .control-container {
+    border: none !important;
+  }
+  
+  .control-container .displayText {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  .control-container .tableComponent {
+    border: 1px solid #E6E6E6;
+    padding: 26px 28px;
+  }
+
+  .control-container .subTitle {
+    text-align: left;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .control-container .text-left {
+    text-align: left;
+  }
+
+  .control-container .mt-15 {
+    margin-top: 15px;
+  }
+
+  .control-container .mb-15 {
+    margin-bottom: 15px;
+  }
+
+  .control-container table {
+    width: 1005;
+  }
+
+  .control-container .checkboxLabel {
+    width: 400px;
+    border: 0.5px solid #C1BDBD;
+    margin-left: 10px;
+    display: inline-block;
+    border-radius: 4px;
+    padding: 4px 8px;
+    text-align: left;
+  }
+
+  .control-container .actionWrap .ant-checkbox-wrapper {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .control-container .flex-wrap {
+      display: flex;
+      align-items: center;
+  }
+
+  .control-container .elseText {
+    font-size: 14px;
+    vertical-align: middle;
+    margin-left: 10px;
+    line-height: 22px;
+
+  }
+
+  .control-container .minmaxText {
+    font-size: 14px;
+    min-width: 110px;
+    text-align: left;
+
+  }
+
+  .control-container th {
+    color: #616161;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .control-container td {
+    padding: 6px 4px;
+    color: #797777;
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  .control-container .btnAddRow {
+    border: none;
+    font-size: 14px;
+    color: #0093FE;
+    padding: 0;
+  }
