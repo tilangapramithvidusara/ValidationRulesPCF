@@ -1,4 +1,5 @@
 import * as React from "react";
+import operationsSampleData from '../SampleData/sampleInputQuestion';
 
 declare global {
   interface Window {
@@ -6,12 +7,8 @@ declare global {
   }
 }
 
-export const loadAllQuestionsInSurvey = async () => {
-  console.log('come');
-  
-  try {
-    console.log('come2');
-    
+export const loadAllQuestionsInSurvey = async () => {  
+  try {    
     const templateID = await window.parent.Xrm.Page.ui._formContext.getAttribute("gyde_surveytemplate").getValue()[0].id.replace("{", "").replace("}", "");
     console.log('template id =========> ', templateID);
     const result = await window.parent.Xrm.WebApi.retrieveMultipleRecords("gyde_surveytemplatechaptersectionquestion", "?$select=gyde_name,gyde_answertype,gyde_shortname&$filter= _gyde_surveytemplate_value eq " + templateID);
@@ -22,16 +19,34 @@ export const loadAllQuestionsInSurvey = async () => {
     }
     
   } catch (error) {
-    console.log("error ========> ", error);
+    console.log("error ========> ", operationsSampleData);
     return {
       error: true,
-      data: [],
+      // data: [],
+      data: operationsSampleData
     }
   }
 }
 
-
-
+export const getCurrentState = async () => {
+  const type = 'gyde_surveytemplatechaptersectionauestion';
+  try {    
+    const result = await window.parent.Xrm.Page.ui._formContext.contextToken.entityTypeName;
+    console.log("Current State ===========> ", result);
+    return {
+      error: false,
+      data: result
+    }
+    
+  } catch (error) {
+    console.log("error ========> ", operationsSampleData);
+    return {
+      error: true,
+      // data: [],
+      data: type
+    }
+  }
+}
 
 
 //     window.parent.Xrm.WebApi.retrieveMultipleRecords("gyde_surveytemplatechaptersectionquestion", "?$select=gyde_name,gyde_answertype,gyde_shortname&$filter= _gyde_surveytemplate_value eq " + templateID).then(

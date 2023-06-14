@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SectionComponent from '../Components/sctionComponent/sectionComponent';
-import { loadAllQuestionsInSurvey } from '../XRMRequests/xrmRequests';
+import { loadAllQuestionsInSurvey, getCurrentState } from '../XRMRequests/xrmRequests';
 import DisplayText from '../Components/displayText/displayText';
 import { Button, Checkbox, Switch } from 'antd';
 import CheckBox from '../Components/checkbox/checkbox';
@@ -8,6 +8,7 @@ import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import NumberInputField from '../Components/numberInput/numberInput';
 import DropDown from '../Components/dropDown/dropDown';
 import operationsSampleData from '../SampleData/sampleInputQuestion';
+import configs from '../configs/actionMapper';
 
 type MinMaxFieldValues = {
     minValue: any,
@@ -15,7 +16,7 @@ type MinMaxFieldValues = {
     sectionKey: any,
     questionName: any
 };
-
+  
 const ParentComponent: React.FC = () => {
     const [sectionOutput, setSectionOutput] = useState<any[]>([]);
     const [elseAction, setElseAction] = useState<any[]>([]);
@@ -118,7 +119,10 @@ const ParentComponent: React.FC = () => {
     const [minQuestionValue, setMinQuestionValue] = useState<any | null>(null);
     const [maxQuestionValue, setMaxQuestionValue] = useState<any | null>(null);
     const [elseShowOutput, setElseShowOutput] = useState<any[]>([]);
+
+    // Get From XRM Requests
     const [questionList, setQuestionList] = useState<any[]>([]);
+    const [actionList, setActionList] = useState<any>();
 
     let handleAddSection = () => {
         const newKey = Math.round(Math.random() * 10000);
@@ -144,10 +148,30 @@ const ParentComponent: React.FC = () => {
           // Handle the case when 'entities' property is not present
           setQuestionList([]);
         }
-      };
+    };
+    
+    const _getCurrentState = async () => {
+        const result = await getCurrentState();
+        console.log("configs['queston_actions']", configs['queston_actions'])
+        if (result.data.includes('queston')) {
+            setActionList(configs['queston_actions']['actions'])
+        } else if (result.data.includes('section')) {
+            setActionList(configs['section_actions']['actions'])
+        } else if (result.data.includes('chapter')) {
+            setActionList(configs['chapter_actions']['actions'])
+        } else {
+            setActionList([])
+        }
+    }
+
+    useEffect(() => {
+        console.log("ACTLIST", actionList);
+
+    }, [actionList])
 
     useEffect(() => {
         loadQuestionHandler();
+        _getCurrentState()
     }, []);
 
     // Update all section else when adding a new section with else
@@ -350,7 +374,6 @@ const ParentComponent: React.FC = () => {
                 }
                 {
                     elseShowOutput && elseShowOutput.length > 0 && elseShowOutput.map(x => {
-                        console.log("DFFFFdddd", x);
                         return (
                             <div>
                                 <div> {`else{${x}}`}</div>
@@ -372,6 +395,7 @@ const ParentComponent: React.FC = () => {
                             setCheckboxValues={setCheckboxValues}
                             setSectionMinMaxFieldValues={setSectionMinMaxFieldValues}
                             questionList={questionList}
+                            actionList={actionList}
                         />
                     </div>
                     <div>
@@ -398,6 +422,7 @@ const ParentComponent: React.FC = () => {
                                     <CheckBox
                                         setCheckboxValues={setElseActionCheckboxValues}
                                         checkboxDefaultSelectedValues={sampleData?.elseConditions?.actions || []}
+                                        checkboxValuesFromConfig={actionList && actionList["else_actions"] ? actionList["else_actions"] : []}
                                     /> </div> : <div></div>
                             }
                         </div>

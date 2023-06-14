@@ -40,7 +40,8 @@ interface SectionComponentProps {
     setRowData: any,
     setCheckboxValues: any,
     setSectionMinMaxFieldValues: any,
-    questionList: any
+    questionList: any,
+    actionList: any
 }
 
 type CheckboxState = {
@@ -54,7 +55,18 @@ type MinMaxFieldValues = {
     questionName: any
 };
 
-const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSectionOutput, setRowKey, setSectionKey, sampleObj, setRowData, setCheckboxValues, setSectionMinMaxFieldValues, questionList }) => {
+const ParentComponent: React.FC<SectionComponentProps> = ({
+    sectionKey,
+    setSectionOutput,
+    setRowKey,
+    setSectionKey,
+    sampleObj,
+    setRowData,
+    setCheckboxValues,
+    setSectionMinMaxFieldValues,
+    questionList,
+    actionList
+}) => {
     const initialCheckboxState: CheckboxState = {};
     const [rows, setRows] = useState<Row[]>([{
         key: 0,
@@ -330,6 +342,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({ sectionKey, setSecti
                                 <CheckBox
                                     setCheckboxValues={setIfConditionActions}
                                     checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions || []}
+                                    checkboxValuesFromConfig={actionList && actionList["if_actions"] ? actionList["if_actions"] : []}
                                 />
                             </div>
                         </div>
