@@ -283,13 +283,11 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     }, [ifConfitionActions])
 
     return (
-        <div>
             <div className='AddSection'>
-                <div className='pcf-wrapper'>
-                    <div className='tableComponent'>
+                    
 
                         {
-                            finalOutput && finalOutput.length && <div style={{ textAlign: "left" }}>{"if("}{finalOutput.map((quesOutput, index) => {
+                            finalOutput && finalOutput.length && <div className='subTitle mb-15'>{"if("}{finalOutput.map((quesOutput, index) => {
                                 if (quesOutput?.question) {
                                     return `${quesOutput?.question} ${quesOutput?.expression || ''} ${quesOutput?.answerType || ''} ${finalOutput[index + 1]?.operation || ''} `
                                 }
@@ -297,7 +295,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                 {/* <div>{checkboxValues.map(val => (` ${val} &&`))}{`}`}</div> */}
                             </div>
                         }
-
+                    <div className='tableComponent'>
                         <div className='row clearfix'>
                             <div className='col-md-12 column'>
                                 <table className='table table-bordered table-hover'>
@@ -330,15 +328,15 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                             />
                                         ))}
                                     </tbody>
-                                    <Button onClick={addRow}>Add Row</Button>
+                                    <Button onClick={addRow} className="btnAddRow">Add Row</Button>
                                 </table>
                             </div>
                         </div>
-                    </div>
-                    <div className='actionfields' style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <div style={{ marginTop: "5%", textAlign: "left" }}>
-                            <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Actions</div>
-                            <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '10px' }}>
+                   
+                    <div className='actionfields'>
+                        <div className='mt-15'>
+                            <div className='subTitle mb-15'>Actions</div>
+                            <div>
                                 <CheckBox
                                     setCheckboxValues={setIfConditionActions}
                                     checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions || []}
@@ -346,10 +344,10 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                 />
                             </div>
                         </div>
-                        <div style={{ marginTop: "5%", textAlign: "left" }}>
-                            <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>Min/Max Field</div>
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                                <div style={{ marginRight: '10px' }}>Min/Max Value:</div>
+                        <div>
+                            <div className='subTitle mb-15'>Min/Max Field</div>
+                            <div className='mb-15 flex-wrap'>
+                                <div className='minmaxText'>Min/Max Value:</div>
                                 <Switch
                                     className="custom-toggle"
                                     checkedChildren="Min Max Value"
@@ -359,13 +357,13 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                             </div>
                             {
                                 toggleEnabled ?
-                                    <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
-                                        <div style={{ width: '200px', marginRight: '10px' }}>Min Value:</div>
+                                    <div className='mb-15 flex-wrap'>
+                                        <div className='minmaxText'>Min Value:</div>
                                         <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
                                     </div>
                                     :
-                                    <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
-                                        <div style={{ width: '200px', marginRight: '10px' }}>Min Value:</div>
+                                    <div className='mb-15 flex-wrap'>
+                                        <div className='minmaxText'>Min Value:</div>
                                         <DropDown
                                             sampleData={questionList}
                                             onSelectItem={setMinQuestionValue}
@@ -375,13 +373,13 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                             }
                             {
                                 toggleEnabled ?
-                                    <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
-                                        <div style={{ width: '200px', marginRight: '10px' }}>Max Value:</div>
+                                    <div className='mb-15 flex-wrap'>
+                                        <div className='minmaxText'>Max Value:</div>
                                         <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
                                     </div>
                                     :
-                                    <div style={{ textAlign: "left", display: 'flex', alignItems: 'center' }}>
-                                        <div style={{ width: '200px', marginRight: '10px' }}>Max Value:</div>
+                                    <div className='mb-15 flex-wrap'>
+                                        <div className='minmaxText'>Max Value:</div>
                                         <DropDown
                                             sampleData={questionList}
                                             onSelectItem={setMaxQuestionValue}
@@ -391,13 +389,8 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                             }
                         </div>
                     </div>
-
-                </div>
-
-                <div>
-                </div>
+                    </div>
             </div>
-        </div>
     )
 }
 
