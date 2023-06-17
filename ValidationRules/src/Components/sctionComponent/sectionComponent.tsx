@@ -9,10 +9,9 @@ import { Button, Checkbox, Input, InputNumber } from 'antd';
 import { Switch } from 'antd';
 import operationsSampleData from '../../SampleData/sampleInputQuestion';
 import NumberInputField from '../numberInput/numberInput';
-import { log } from 'console';
 
 interface Row {
-    key: any,
+    Row: any,
     column1: string;
     column2: string;
     column3: string;
@@ -41,7 +40,10 @@ interface SectionComponentProps {
     setCheckboxValues: any,
     setSectionMinMaxFieldValues: any,
     questionList: any,
-    actionList: any
+    actionList: any,
+    toggleActionList: any,
+    deleteRowAction: any,
+    setDeleteRowAction: any,
 }
 
 type CheckboxState = {
@@ -65,20 +67,13 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     setCheckboxValues,
     setSectionMinMaxFieldValues,
     questionList,
-    actionList
+    actionList,
+    toggleActionList,
+    deleteRowAction,
+    setDeleteRowAction
 }) => {
     const initialCheckboxState: CheckboxState = {};
-    const [rows, setRows] = useState<Row[]>([
-        // {
-        // key: 0,
-        // column1: '',
-        // column2: '',
-        // column3: '',
-        // column4: '',
-        // column5: '',
-        // column6: ''
-        // }
-    ]);
+    const [rows, setRows] = useState<Row[]>([]);
     const [question, setQuestion] = useState<string | null>(null);
     const [expression, setExpression] = useState<string | null>(null);
     const [operation, setOperation] = useState<string | null>(null);
@@ -97,12 +92,17 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     const [minQuestionValue, setMinQuestionValue] = useState<any | null>(null);
     const [maxQuestionValue, setMaxQuestionValue] = useState<any | null>(null);
     const [removeRow, setRemoveRow] = useState<any | null>(false);
+    const [visibilityEnable, setVisibilityEnable] = useState<any | null>([]);
+    const [toggleEnable, setToggledEnable] = useState<any | null>([]);
+    const [displayOutput, setDisplayOutput] = useState<any | null>([]);
+    const [maxRowId, setMaxRowId] = useState<any | null>(0);
+    const [rowCount, setRowCount] = useState<any | null>(0);
 
     const addRow = () => {
         setRows(prevRows => ([
             ...prevRows,
             {
-                key: prevRows.length,
+                Row: maxRowId+1,
                 column1: '',
                 column2: '',
                 column3: '',
@@ -116,10 +116,6 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     const handleInputChange = (index: number, column: any) => {
         const updatedKey = Object.keys(column)[0];
         const updatedValue = Object.values(column)[0];
-        console.log("updatedKey", updatedKey)
-        console.log("updatedValue", updatedValue)
-        console.log("updatedindex", index)
-
         const newItem: Item = {
             index: index,
             Field: question,
@@ -128,19 +124,19 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
             showhide: showhide,
             AnswerType: answerType
         };
-        console.log("finalOutput", finalOutput)
+        // console.log("finalOutput", finalOutput)
 
-        if (finalOutput && finalOutput?.length) {
-            let newState = [...finalOutput];
-            if (updatedValue) {
-                newState[index][updatedKey] = updatedValue;
-                setFinalOutput(newState)
-            }
+        // if (finalOutput && finalOutput?.length) {
+        //     let newState = [...finalOutput];
+        //     if (updatedValue) {
+        //         newState[index][updatedKey] = updatedValue;
+        //         setFinalOutput(newState)
+        //     }
 
-        } else {
-            setFinalOutput(prevItems => [...prevItems, newItem]);
-        }
-        finalOutput && finalOutput?.length && setSectionOutput([{ key: sectionKey, rowOutput: finalOutput }]);
+        // } else {
+        //     setFinalOutput(prevItems => [...prevItems, newItem]);
+        // }
+        // finalOutput && finalOutput?.length && setSectionOutput([{ key: sectionKey, rowOutput: finalOutput }]);
 
         // Set the row key when you update the field
         setRowKey(index);
@@ -158,7 +154,8 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                         return {
                             ...condition,
                             [updateKey]: updateValue,
-                            sectionKey: sectionKey
+                            sectionKey: sectionKey,
+                            Row: rowIndex
                         };
                     }
                     return condition;
@@ -184,36 +181,26 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
 
 
     const handleDeleteRow = (keyToDelete: number) => {
-        console.log("KEY RO DELETE", rows)
+        console.log("keyToDelete ---> ", keyToDelete)
 
-        // setRows(prevRows => {
-        //     const filteredRows = prevRows.filter(row => row.key !== keyToDelete);
-        //     console.log("KEY RO DELETE 1", filteredRows)
-        //     return filteredRows;
-        // });
-        setRows(prevRows => {
-            const filteredRows = prevRows.filter(row => row.key !== keyToDelete);
-            const updatedRows = filteredRows.map((row, index) => ({
-              ...row,
-              key: prevRows[index].key // Update the key of each remaining row based on the original index
-            }));
-            return filteredRows;
-        })        
+        if (keyToDelete !== 1) {
+            setRows(prevRows => prevRows.filter(row => row.Row !== keyToDelete))
+            setRowKey(keyToDelete);
+            setSectionKey(sectionKey);
+            setDeleteRowAction(!deleteRowAction);
+            setRowData((prevRows: any[]) => prevRows.filter((row: { Row: number; }) => row.Row !== keyToDelete))
+
+        }
+
     };
 
-    useEffect(() => {
-        console.log("ROSSSSddddSS", rows);
-    }, [rows]);
-
     const handleCheckboxClick = (index: number) => {
-        console.log("Checkbox Clicked ", index)
     }
 
     useEffect(() => {
-        console.log("DKJDJJD", sampleObj)
         if (!sampleObj?.length) {
             setRows([{
-                key: 0,
+                Row: 1,
                 column1: '',
                 column2: '',
                 column3: '',
@@ -234,13 +221,13 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                         column4: '',
                         column5: '',
                         column6: '',
-                        key: x.Row
+                        Row: x.Row
                     }
                 ]);
             });
         }
 
-       
+        setRowCount(rows.length)
 
     }, [])
 
@@ -288,30 +275,34 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     }, [minQuestionValue, maxQuestionValue]);
 
     useEffect(() => {
-        console.log("minMaxValueminMaxValue", minMaxValue);
         setSectionKey(sectionKey);
         setSectionMinMaxFieldValues(minMaxValue);
     }, [minMaxValue])
 
     useEffect(() => {
-        console.log("ifConfitionActions", ifConfitionActions);
         setSectionKey(sectionKey);
         setCheckboxValues(ifConfitionActions || []);
     }, [ifConfitionActions])
+
+
+    useEffect(() => {
+        console.log("rowsrows ----->", rows);
+        setMaxRowId(Math.max(...rows.map(item => item.Row)));
+        setRowCount(rows.length)
+    }, [rows])
 
     return (
             <div className='AddSection'>
                     
 
-                        {
+                        {/* {
                             finalOutput && finalOutput.length && <div className='subTitle mb-15'>{"if("}{finalOutput.map((quesOutput, index) => {
                                 if (quesOutput?.Field) {
                                     return `${quesOutput?.Field} ${quesOutput?.Expression || ''} ${quesOutput?.AnswerType || ''} ${finalOutput[index + 1]?.Operator || ''} `
                                 }
                             })}{"){"}
-                                {/* <div>{checkboxValues.map(val => (` ${val} &&`))}{`}`}</div> */}
                             </div>
-                        }
+                        } */}
                     <div className='tableComponent'>
                         <div className='row clearfix'>
                             <div className='col-md-12 column'>
@@ -328,9 +319,9 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                     <tbody>
                                         {rows.map((row, index) => (
                                             <TableRow
-                                                key={row.key}
+                                                key={row.Row}
                                                 row={row}
-                                                index={row.key}
+                                                index={row.Row}
                                                 setRowKey={setRowKey}
                                                 handleInputChange={handleInputChange}
                                                 onQuestionChanged={setQuestion}
@@ -340,8 +331,9 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                                 onOperationChanged={setOperation}
                                                 handleDeleteRow={handleDeleteRow}
                                                 handleCheckboxClick={handleCheckboxClick}
-                                                sampleObjData={sampleObj && sampleObj[0] && sampleObj[0]["if"].conditions.find((item: any) => item.Row === row.key) || {}}
+                                                sampleObjData={sampleObj && sampleObj[0] && sampleObj[0]["if"].conditions.find((item: any) => item.Row === row.Row) || {}}
                                                 questionList={questionList}
+                                                rowCount={rowCount}
                                             />
                                         ))}
                                     </tbody>
@@ -361,6 +353,83 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                 />
                             </div>
                         </div>
+                    
+
+                    {
+                        toggleActionList &&
+                        toggleActionList.length &&
+                        toggleActionList.map((togAction: any) => {
+                            return  <><div className='subTitle mb-15'></div><div className='mb-15 flex-wrap'>
+                            <div className='visible-box'>
+                                <CheckBox
+                                    setCheckboxValues={setVisibilityEnable}
+                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]['if'].actions || []}
+                                    checkboxValuesFromConfig={[{ value: `${togAction.value}` }]}
+                                    
+                                    />
+                                {togAction.displayName}
+                                <Switch
+                                    className="custom-toggle"
+                                    checkedChildren={togAction.toggleData.disabled.displayName}
+                                    unCheckedChildren={togAction.toggleData.enabled.displayName}
+                                    onChange={onToggleValueChanged}
+                                    disabled={!visibilityEnable.includes(togAction.value)}
+                                    />
+                            </div>
+                        </div></>
+                        })
+                    }
+                        
+
+
+
+                    
+                        {/* <div>
+                            <div className='subTitle mb-15'></div>
+                            <div className='mb-15 flex-wrap'>
+                            <div className='visible-box'>
+                            <CheckBox
+                                setCheckboxValues={setToggledEnable}
+                                checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]['if'].actions || []}
+                                checkboxValuesFromConfig={[{ value: 'Visibility' }]}
+                                />
+                                Toggle
+                                <Switch
+                                className="custom-toggle"
+                                checkedChildren="Disable"
+                                unCheckedChildren="Enable"
+                                onChange={onToggleValueChanged}
+                                disabled={!toggleEnable.length}
+                                />
+                            </div>
+                        </div>
+                        </div> */}
+
+                    
+
+                        {/* <div>
+                            <div className='subTitle mb-15'></div>
+                            <div className='mb-15 flex-wrap'>
+                            <div className='visible-box'>
+                            <CheckBox
+                                setCheckboxValues={setDisplayOutput}
+                                checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]['if'].actions || []}
+                                checkboxValuesFromConfig={[{ value: 'Visibility' }]}
+                                />
+                                Output Doc
+                                <Switch
+                                className="custom-toggle"
+                                checkedChildren="Hide"
+                                unCheckedChildren="Show"
+                                onChange={onToggleValueChanged}
+                                disabled={!displayOutput.length}
+                                />
+                            </div>
+                        </div>
+                    </div> */}
+                    
+
+
                         <div>
                             <div className='subTitle mb-15'>Min/Max Field</div>
                             <div className='mb-15 flex-wrap'>

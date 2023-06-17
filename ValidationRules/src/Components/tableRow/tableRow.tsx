@@ -31,7 +31,8 @@ interface TableRowProps {
     handleCheckboxClick: (index: number) => void;
     setRowKey: any,
     sampleObjData: any,
-    questionList: any
+    questionList: any,
+    rowCount: any
 }
 
 function TableRow({
@@ -47,7 +48,8 @@ function TableRow({
     handleCheckboxClick,
     setRowKey,
     sampleObjData,
-    questionList
+    questionList,
+    rowCount
 }: TableRowProps) {
 
     const [selectedQuestion, setSelectedQuestion] = useState<any | null>(null);
@@ -59,7 +61,6 @@ function TableRow({
 
     useEffect(() => {
         if (selectedQuestion) onQuestionChanged(selectedQuestion?.value);
-        console.log("selectedQuestionselectedQuestion", selectedQuestion)
         handleInputChange(index, { Field: selectedQuestion?.value })
     }, [selectedQuestion])
 
@@ -101,7 +102,7 @@ function TableRow({
                 <Checkbox value={index} onClick={() => handleCheckboxClick(index)} />
             </td>
             {
-                index !== 0 ? (
+                index !== 1 ? (
                     <td>
                         <DropDown
                             sampleData={operationsSampleData}

@@ -9,6 +9,8 @@ import NumberInputField from '../Components/numberInput/numberInput';
 import DropDown from '../Components/dropDown/dropDown';
 import operationsSampleData from '../SampleData/sampleInputQuestion';
 import configs from '../configs/actionMapper';
+import toggleWithCheckboxMapper from '../configs/toggleWithCheckboxMapper';
+
 import sampleOutputData from '../SampleData/SampleOutputData';
 import utilHelper from '../utilHelper/utilHelper';
 // import removeIcon from '../assets/delete.png';
@@ -55,6 +57,8 @@ const ParentComponent: React.FC = () => {
     // Get From XRM Requests
     const [questionList, setQuestionList] = useState<any[]>([]);
     const [actionList, setActionList] = useState<any>();
+    const [toggleActionList, setToggleActionList] = useState<any>();
+    const [deleteRowAction, setDeleteRowAction] = useState<any>(false);
 
     let handleAddSection = () => {
         const newKey = Math.round(Math.random() * 10000);
@@ -63,8 +67,11 @@ const ParentComponent: React.FC = () => {
     };
 
     const handleRemoveSection = (sectionKey: any) => {
-        if (sections.length >= 2)
+        if (sections.length >= 2) {
             setSections(sections.filter((section) => section.key !== sectionKey));
+            setConditionData(conditionData.filter((item) => item.index !== sectionKey));
+        }
+
     };
 
     const loadQuestionHandler = async () => {
@@ -87,19 +94,17 @@ const ParentComponent: React.FC = () => {
         console.log("configs['queston_actions']", configs['question_actions'])
         if (result.data.includes('question')) {
             setActionList(configs['question_actions']['actions'])
+            setToggleActionList(toggleWithCheckboxMapper['question_actions']['if']['toggleActions'])
         } else if (result.data.includes('section')) {
             setActionList(configs['section_actions']['actions'])
+            setToggleActionList(toggleWithCheckboxMapper['question_actions']['if']['toggleActions'])
         } else if (result.data.includes('chapter')) {
             setActionList(configs['chapter_actions']['actions'])
+            setToggleActionList(toggleWithCheckboxMapper['question_actions']['if']['toggleActions'])
         } else {
             setActionList([])
         }
     }
-
-    useEffect(() => {
-        console.log("ACTLIST", sampleData?.ifConditions);
-
-    }, [])
 
     useEffect(() => {
         loadQuestionHandler();
@@ -129,13 +134,9 @@ const ParentComponent: React.FC = () => {
 
     useEffect(() => {
         rowData.sort((a, b) => a.Row - b.Row);
-        console.log("transformedData------->", sampleData?.ifConditions);
-        console.log("rowDatarowData------->", rowData);
-
         let _setUpdatedRowData;
         if (rowData?.length && sampleData?.ifConditions.length) {
             _setUpdatedRowData = utilHelper(rowData, sampleData?.ifConditions, sectionKey);
-            console.log("DATAAAA", _setUpdatedRowData)
         } else {
             _setUpdatedRowData = rowData?.filter(rowDta => rowDta.sectionKey === sectionKey)
         }
@@ -169,15 +170,12 @@ const ParentComponent: React.FC = () => {
                 }
                 return secData;
             });
-            console.log("updatedRowData", updatedRowData)
             if (updatedRowData.some(secData => secData.index === sectionKey)) {
                 return updatedRowData;
             } else {
                 return [...updatedRowData, transformedData];
             }
         });
-
-        console.log("conditionDataconditionData-----> ", conditionData);
 
         const _transformedData = {
             ifConditions: conditionData,
@@ -191,23 +189,18 @@ const ParentComponent: React.FC = () => {
         elseActionCheckboxValues,
         sectionKey,
         minMaxValue,
-        sectionMinMaxFieldValues,
-        sampleData
+        sectionMinMaxFieldValues
     ]);
 
 
-    // useEffect(() => {
-    //     if (Object.keys(sampleData).length !== 0)
-    //         setConditionData(sampleData?.ifConditions)
-    // }, [sampleData]);
+    useEffect(() => {
+        if(sampleData?.ifConditions?.length)
+            setConditionData(sampleData?.ifConditions)
+        
+    }, []);
 
     useEffect(() => {
-        console.log("conditionData 2", conditionData)
         const indexes = conditionData.map(x => x.index);
-        console.log("indexes indexes", indexes)
-        console.log("indexes conditionData", conditionData)
-        
-            
         const expressionArray: React.SetStateAction<any[]> = [];
         //   let operatorString = "" 
         indexes.forEach(x => {
@@ -223,18 +216,12 @@ const ParentComponent: React.FC = () => {
                 if (ifConditionMinMaxObj.maxValue) {
                     result.push(`max=${ifConditionMinMaxObj.maxValue}`)
                 }
-                console.log("ifConditionActionArray", ifConditionActionArray);
                 let mergedArray = [...ifConditionActionArray, ...result].join("&&")
                 setElseShowOutput([mergedArray])
-
-                console.log("elseShowOutput", elseShowOutput);
-
-
-                console.log("ifConditionActionArray", result)
-                const expressions = ifConditionArray.map((condition: { Row: any; expression: any; Field: any; Operator: any; AnswerType: any; }, index: any) => {
-                    const { Row, expression, Field, Operator, AnswerType } = condition;
+                const expressions = ifConditionArray.map((condition: { Row: any; Expression: any; Field: any; Operator: any; AnswerType: any; }, index: any) => {
+                    const { Row, Expression, Field, Operator, AnswerType } = condition;
                     // operatorString = operation
-                    return `${Field || ''} ${expression || ''} ${AnswerType || ''} ${ifConditionArray[index + 1]?.Operator || ''}`;
+                    return `${Field || ''} ${Expression || ''} ${AnswerType || ''} ${ifConditionArray[index + 1]?.Operator || ''}`;
                 });
 
                 expressionArray.push({ expressions: `${expressions}`, actions: mergedArray || [] })
@@ -253,11 +240,8 @@ const ParentComponent: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        console.log("jsonArrayFormat", jsonArrayFormat);
         const elseSection = jsonArrayFormat?.elseConditions[0]?.actions || []
         const elseSectionMinMax = jsonArrayFormat?.elseConditions[0]?.minMax || {}
-        console.log("elseSectionMinMax", elseSectionMinMax);
-        console.log("elseSection", elseSection);
         let result = []
         if (elseSectionMinMax.minValue) {
             result.push(`min=${elseSectionMinMax.minValue}`)
@@ -266,12 +250,8 @@ const ParentComponent: React.FC = () => {
         if (elseSectionMinMax.maxValue) {
             result.push(`max=${elseSectionMinMax.maxValue}`)
         }
-        console.log("resultresult", elseSection);
         let mergedArray = [...elseSection, ...result].join("&&")
         setElseShowOutput([mergedArray])
-
-        console.log("elseShowOutput", elseShowOutput);
-
     }, [jsonArrayFormat])
 
     const handleMinValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -309,10 +289,33 @@ const ParentComponent: React.FC = () => {
     const onToggleValueChanged = (value: any) => {
         setToggleEnabled(value)
     }
+
+    useEffect(() => {
+        console.log("CONDIIII 1", conditionData);
+        console.log("CONDIIII 2", rowKey);
+        console.log("CONDIIII 3", sectionKey);
+
+        const matchedObjIndex = conditionData.findIndex((item) => item.index === sectionKey);
+
+        if (matchedObjIndex !== -1) {
+          const matchedObj = conditionData[matchedObjIndex];
+        
+          matchedObj.blocks[0].if.conditions = matchedObj.blocks[0].if.conditions.filter(
+            (condition: { Row: any; }) => condition.Row !== rowKey
+          );
+        
+          setConditionData([...conditionData]);
+        }
+        
+    }, [deleteRowAction])
+
+    useEffect(() => {
+        console.log("CONDIIII conditionData", conditionData);
+    }, [conditionData])
     return (
         <div>
             <div className="displayText">
-                <DisplayText fieldOutputData={[]} />
+                {/* <DisplayText fieldOutputData={[]} /> */}
                 {
                     showOutput && showOutput.length > 0 && showOutput.map(x => {
                         return (
@@ -346,6 +349,9 @@ const ParentComponent: React.FC = () => {
                             setSectionMinMaxFieldValues={setSectionMinMaxFieldValues}
                             questionList={questionList}
                             actionList={actionList}
+                            toggleActionList={toggleActionList}
+                            deleteRowAction={deleteRowAction}
+                            setDeleteRowAction={setDeleteRowAction}
                         />
                     
                     <div className='text-left'>

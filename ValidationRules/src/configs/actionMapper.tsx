@@ -4,30 +4,22 @@ const actionMapper = {
         actions: {
             if_actions: [
                 {
-                    displayName: 'Disable',
-                    value: 'disable'
+                    displayName: 'Show',
+                    value: 'show'
                 },
                 {
                     displayName: 'Enable',
                     value: 'enable'
                 },
                 {
-                    displayName: 'Show',
-                    value: 'show'
+                    displayName: 'Show in Document',
+                    value: 'showInDocument'
                 },
-                {
-                    displayName: 'Hide',
-                    value: 'hide'
-                }
         ],
         else_actions: [
             {
-                displayName: 'Disable',
-                value: 'disable'
-            },
-            {
-                displayName: 'Enable',
-                value: 'enable'
+                displayName: 'Hide',
+                value: 'hide'
             }
         ]
         }

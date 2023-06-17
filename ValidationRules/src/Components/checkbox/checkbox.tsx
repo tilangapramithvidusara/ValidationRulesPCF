@@ -11,7 +11,7 @@ interface CheckBoxProps {
 function CheckBox({
   setCheckboxValues,
   checkboxDefaultSelectedValues,
-  checkboxValuesFromConfig
+  checkboxValuesFromConfig,
 }: CheckBoxProps) {
   const onChange = (checkedValues: CheckboxValueType[]) => {
     setCheckboxValues(checkedValues || []);
@@ -32,8 +32,7 @@ function CheckBox({
         checkboxValuesFromConfig && checkboxValuesFromConfig.length && checkboxValuesFromConfig.map((configAction: any) => (
           <Row>
             <Col span={8}>
-              {/* <Checkbox value={configAction.value}> {configAction.displayName}</Checkbox> */}
-              <Checkbox value={configAction.value}><span className='checkboxLabel'>{configAction.displayName}</span> </Checkbox>
+              <Checkbox value={configAction.value}>{configAction?.displayName && <span className='checkboxLabel'>{configAction?.displayName}</span>} </Checkbox>
             </Col>
         </Row>
         ))
