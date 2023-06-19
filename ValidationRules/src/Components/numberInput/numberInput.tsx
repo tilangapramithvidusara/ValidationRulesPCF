@@ -3,12 +3,14 @@ import { InputNumber } from 'antd';
 
 interface NumberInputField {
     selectedValue: any;
-    handleNumberChange: any;
+  handleNumberChange: any;
+  defaultDisabled: any
 }
 
 const FieldInput: React.FC<NumberInputField> = ({
     selectedValue,
-    handleNumberChange
+  handleNumberChange,
+  defaultDisabled
 }) => {
 
   const numberFormatter = (value: number | undefined) => {
@@ -34,6 +36,7 @@ const FieldInput: React.FC<NumberInputField> = ({
         formatter={numberFormatter}
         parser={numberParser}
         onChange={handleNumberChange}
+        disabled={defaultDisabled}
       />
     </div>
   );

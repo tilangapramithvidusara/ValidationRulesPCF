@@ -80,7 +80,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     const [showhide, setShowHide] = useState<string | null>(null);
     const [answerType, setAnswerType] = useState<string | null>(null);
     const [finalOutput, setFinalOutput] = useState<any[]>([]);
-    const [toggleEnabled, setToggleEnabled] = useState(false);
+    // const [toggleEnabled, setToggleEnabled] = useState(false);
     const [ifConfitionActions, setIfConditionActions] = useState<any | null>(null);
 
     const [minMaxValue, setMinMaxValue] = useState<MinMaxFieldValues>({
@@ -93,16 +93,19 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
     const [maxQuestionValue, setMaxQuestionValue] = useState<any | null>(null);
     const [removeRow, setRemoveRow] = useState<any | null>(false);
     const [visibilityEnable, setVisibilityEnable] = useState<any | null>([]);
-    const [toggleEnable, setToggledEnable] = useState<any | null>([]);
+    const [toggleEnableMin, setToggledEnableMin] = useState<any | null>(false);
+    const [toggleEnableMax, setToggledEnableMax] = useState<any | null>(false);
     const [displayOutput, setDisplayOutput] = useState<any | null>([]);
     const [maxRowId, setMaxRowId] = useState<any | null>(0);
     const [rowCount, setRowCount] = useState<any | null>(0);
+    const [minCheckboxEnabled, setMinCheckboxEnabled] = useState<any | null>(false);
+    const [maxCheckboxEnabled, setMaxCheckboxEnabled] = useState<any | null>(false);
 
     const addRow = () => {
         setRows(prevRows => ([
             ...prevRows,
             {
-                Row: maxRowId+1,
+                Row: maxRowId + 1,
                 column1: '',
                 column2: '',
                 column3: '',
@@ -206,8 +209,8 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                 column3: '',
                 column4: '',
                 column5: '',
-            column6: ''
-        }]);
+                column6: ''
+            }]);
         }
 
         if (sampleObj && sampleObj[0] && sampleObj[0]["if"]) {
@@ -236,9 +239,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
 
     // }, [minMaxValues])
 
-    const onToggleValueChanged = (value: any) => {
-        setToggleEnabled(value)
-    }
+  
     const handleMinValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = Number(e);
         setSectionKey(sectionKey);
@@ -268,12 +269,25 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
         setMinMaxValue((prevState) => {
             return {
                 ...prevState,
-                maxValue: maxQuestionValue?.label || '',
                 minValue: minQuestionValue?.label || ''
             };
         });
-    }, [minQuestionValue, maxQuestionValue]);
+    }, [minQuestionValue]);
 
+
+    useEffect(() => {
+        setSectionKey(sectionKey);
+        setMinMaxValue((prevState) => {
+            return {
+                ...prevState,
+                maxValue: maxQuestionValue?.label || ''
+            };
+        });
+    }, [maxQuestionValue]);
+
+    useEffect(() => {
+        console.log("MINMAX", minMaxValue)
+    }, [minMaxValue])
     useEffect(() => {
         setSectionKey(sectionKey);
         setSectionMinMaxFieldValues(minMaxValue);
@@ -291,11 +305,19 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
         setRowCount(rows.length)
     }, [rows])
 
-    return (
-            <div className='AddSection'>
-                    
 
-                        {/* {
+    const onChangeMinCheckbox = (e: CheckboxChangeEvent) => {
+        console.log(`checked = ${e.target.checked}`);
+        setMinCheckboxEnabled(e.target.checked)
+      };
+
+
+
+    return (
+        <div className='AddSection'>
+
+
+            {/* {
                             finalOutput && finalOutput.length && <div className='subTitle mb-15'>{"if("}{finalOutput.map((quesOutput, index) => {
                                 if (quesOutput?.Field) {
                                     return `${quesOutput?.Field} ${quesOutput?.Expression || ''} ${quesOutput?.AnswerType || ''} ${finalOutput[index + 1]?.Operator || ''} `
@@ -303,59 +325,59 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                             })}{"){"}
                             </div>
                         } */}
-                    <div className='tableComponent'>
-                        <div className='row clearfix'>
-                            <div className='col-md-12 column'>
-                                <table className='table table-bordered table-hover'>
-                                    <thead>
-                                        <tr>
-                                            <th> </th>
-                                            <th> And/OR</th>
-                                            <th> Field </th>
-                                            <th> Operator </th>
-                                            <th> Value </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {rows.map((row, index) => (
-                                            <TableRow
-                                                key={row.Row}
-                                                row={row}
-                                                index={row.Row}
-                                                setRowKey={setRowKey}
-                                                handleInputChange={handleInputChange}
-                                                onQuestionChanged={setQuestion}
-                                                onExpressionChanged={setExpression}
-                                                onAnswerTypeChanged={setAnswerType}
-                                                onShowHideChanged={setShowHide}
-                                                onOperationChanged={setOperation}
-                                                handleDeleteRow={handleDeleteRow}
-                                                handleCheckboxClick={handleCheckboxClick}
-                                                sampleObjData={sampleObj && sampleObj[0] && sampleObj[0]["if"].conditions.find((item: any) => item.Row === row.Row) || {}}
-                                                questionList={questionList}
-                                                rowCount={rowCount}
-                                            />
-                                        ))}
-                                    </tbody>
-                                    <Button onClick={addRow} className="btnAddRow">Add Row</Button>
-                                </table>
-                            </div>
-                        </div>
-                   
-                    <div className='actionfields'>
-                        <div className='mt-15'>
-                            <div className='subTitle mb-15'>Actions</div>
-                            <div>
-                                <CheckBox
-                                    setCheckboxValues={setIfConditionActions}
-                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions.options || []}
-                                    checkboxValuesFromConfig={actionList && actionList["if_actions"] ? actionList["if_actions"] : []}
-                                />
-                            </div>
-                        </div>
-                    
+            <div className='tableComponent'>
+                <div className='row clearfix'>
+                    <div className='col-md-12 column'>
+                        <table className='table table-bordered table-hover'>
+                            <thead>
+                                <tr>
+                                    <th> </th>
+                                    <th> And/OR</th>
+                                    <th> Field </th>
+                                    <th> Operator </th>
+                                    <th> Value </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rows.map((row, index) => (
+                                    <TableRow
+                                        key={row.Row}
+                                        row={row}
+                                        index={row.Row}
+                                        setRowKey={setRowKey}
+                                        handleInputChange={handleInputChange}
+                                        onQuestionChanged={setQuestion}
+                                        onExpressionChanged={setExpression}
+                                        onAnswerTypeChanged={setAnswerType}
+                                        onShowHideChanged={setShowHide}
+                                        onOperationChanged={setOperation}
+                                        handleDeleteRow={handleDeleteRow}
+                                        handleCheckboxClick={handleCheckboxClick}
+                                        sampleObjData={sampleObj && sampleObj[0] && sampleObj[0]["if"].conditions.find((item: any) => item.Row === row.Row) || {}}
+                                        questionList={questionList}
+                                        rowCount={rowCount}
+                                    />
+                                ))}
+                            </tbody>
+                            <Button onClick={addRow} className="btnAddRow">Add Row</Button>
+                        </table>
+                    </div>
+                </div>
 
-                    {
+                <div className='actionfields'>
+                    <div className='mt-15'>
+                        <div className='subTitle mb-15'>Actions</div>
+                        <div>
+                            <CheckBox
+                                setCheckboxValues={setIfConditionActions}
+                                checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions.options || []}
+                                checkboxValuesFromConfig={actionList && actionList["if_actions"] ? actionList["if_actions"] : []}
+                            />
+                        </div>
+                    </div>
+
+
+                    {/* {
                         toggleActionList &&
                         toggleActionList.length &&
                         toggleActionList.map((togAction: any) => {
@@ -378,10 +400,70 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                             </div>
                         </div></>
                         })
-                    }
-                        <div>
-                            <div className='subTitle mb-15'>Min/Max Field</div>
-                            <div className='mb-15 flex-wrap'>
+                    } */}
+                    <div>
+                        <div className='subTitle mb-15'>Min/Max Field</div>
+                        
+                        <div className='mb-15 flex-wrap'>
+                        <div style={{ marginRight: '10px' }}> <Checkbox onChange={(e) => setMinCheckboxEnabled(e.target.checked)}/> </div>
+                                    <div style={{ marginRight: '10px' }}>
+                                        <Switch
+                                            className="custom-toggle"
+                                            checkedChildren="Min Value"
+                                            unCheckedChildren="Question"
+                                            onChange={() => setToggledEnableMin(!toggleEnableMin)}
+                                            disabled={!minCheckboxEnabled}
+                                        />
+                            </div>
+                            
+                            <div className='minmaxText'>Min Value:</div>
+                            { toggleEnableMin ?
+                                <NumberInputField
+                                    selectedValue={{}}
+                                    handleNumberChange={handleMinValueChange}
+                                    defaultDisabled={!minCheckboxEnabled}
+                                /> :
+                                <DropDown
+                                    sampleData={questionList}
+                                    onSelectItem={setMinQuestionValue}
+                                    selectedValue={""}
+                                    defaultDisabled={!minCheckboxEnabled}
+                                />
+                            }
+                                        
+                        </div>
+                        
+
+                        <div className='mb-15 flex-wrap'>
+                        <div style={{ marginRight: '10px' }}> <Checkbox onChange={(e) => setMaxCheckboxEnabled(e.target.checked)}/> </div>
+                                    <div style={{ marginRight: '10px' }}>
+                                        <Switch
+                                            className="custom-toggle"
+                                            checkedChildren="Min Value"
+                                            unCheckedChildren="Question"
+                                            onChange={() => setToggledEnableMax(!toggleEnableMax)}
+                                            disabled={!maxCheckboxEnabled}
+                                        />
+                            </div>
+                            
+                            <div className='minmaxText'>Max Value:</div>
+                            { toggleEnableMax ?
+                                <NumberInputField
+                                    selectedValue={{}}
+                                    handleNumberChange={handleMaxValueChange}
+                                    defaultDisabled={!maxCheckboxEnabled}
+                                /> :
+                                <DropDown
+                                    sampleData={questionList}
+                                    onSelectItem={setMaxQuestionValue}
+                                    selectedValue={""}
+                                    defaultDisabled={!maxCheckboxEnabled}
+                                />
+                            }
+                                        
+                        </div>
+
+                        {/* <div className='mb-15 flex-wrap'>
                                 <div className='minmaxText'>Min/Max Value:</div>
                                 <Switch
                                     className="custom-toggle"
@@ -389,43 +471,95 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                     unCheckedChildren="Question Name"
                                     onChange={onToggleValueChanged}
                                 />
+                            </div> */}
+                    
+
+                        {/* {
+                            toggleEnabled ?
+                                <>
+                                        <div className='mb-15 flex-wrap'>
+                        <div style={{ marginRight: '10px' }}> <Checkbox onChange={onChangeMinCheckbox}/> </div>
+                                    <div style={{ marginRight: '10px' }}>
+                                        <Switch
+                                            className="custom-toggle"
+                                            checkedChildren="Min Value"
+                                            unCheckedChildren="Question"
+                                            onChange={onToggleValueChanged}
+                                            disabled={!minCheckboxEnabled}
+                                        />
+                                    </div>
+                                    <div className='minmaxText'>Min Value:</div>
+                                        <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} defaultDisabled={!minCheckboxEnabled} />
+                                        </div>
+                                </>
+                                :<>
+                                <div className='mb-15 flex-wrap'>
+                        <div style={{ marginRight: '10px' }}> <Checkbox onChange={onChangeMinCheckbox}/> </div>
+                                <div style={{ marginRight: '10px' }}>
+                                    <Switch
+                                        className="custom-toggle"
+                                        checkedChildren="Min Max Value"
+                                        unCheckedChildren="Question Name"
+                                        onChange={onToggleValueChanged}
+                                        disabled={!minCheckboxEnabled}
+                                    />
+                                </div>
+                                <div className='minmaxText'>Max Value:</div>
+                                <DropDown
+                                    sampleData={questionList}
+                                    onSelectItem={setMaxQuestionValue}
+                                    selectedValue={""}
+                                    defaultDisabled={!minCheckboxEnabled}
+                                />
                             </div>
-                            {
-                                toggleEnabled ?
-                                    <div className='mb-15 flex-wrap'>
-                                        <div className='minmaxText'>Min Value:</div>
-                                        <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
-                                    </div>
-                                    :
-                                    <div className='mb-15 flex-wrap'>
-                                        <div className='minmaxText'>Min Value:</div>
-                                        <DropDown
-                                            sampleData={questionList}
-                                            onSelectItem={setMinQuestionValue}
-                                            selectedValue={""}
+                            </>
+                            } */}
+                            </div>
+                        {/* {
+                            toggleEnabled ?
+                                <div className='mb-15 flex-wrap'>
+                                    <div style={{ marginRight: '10px' }}> <Checkbox /> </div>
+                                    <div style={{ marginRight: '10px' }}>
+                                        <Switch
+                                            className="custom-toggle"
+                                            checkedChildren="Min Max Value"
+                                            unCheckedChildren="Question Name"
+                                            onChange={onToggleValueChanged}
                                         />
                                     </div>
-                            }
-                            {
-                                toggleEnabled ?
-                                    <div className='mb-15 flex-wrap'>
-                                        <div className='minmaxText'>Max Value:</div>
-                                        <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
-                                    </div>
-                                    :
-                                    <div className='mb-15 flex-wrap'>
-                                        <div className='minmaxText'>Max Value:</div>
-                                        <DropDown
-                                            sampleData={questionList}
-                                            onSelectItem={setMaxQuestionValue}
-                                            selectedValue={""}
-                                        />
-                                    </div>
-                            }
-                        </div>
-                    </div>
+                                    <div className='minmaxText'>Max Value:</div>
+                                    <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} defaultDisabled={false}/>
+                                </div>
+
+                                :
+
+                                <div className='mb-15 flex-wrap'>
+                                <div style={{ marginRight: '10px' }}> <Checkbox /> </div>
+                                <div style={{ marginRight: '10px' }}>
+                                    <Switch
+                                        className="custom-toggle"
+                                        checkedChildren="Min Value"
+                                        unCheckedChildren="Question"
+                                        onChange={onToggleValueChanged}
+                                    />
+                                </div>
+                                <div className='minmaxText'>Min Value:</div>
+                                <DropDown
+                                    sampleData={questionList}
+                                    onSelectItem={setMinQuestionValue}
+                                        selectedValue={""}
+                                        defaultDisabled={false}
+                                />
+
+                            </div>
+                                
+                                
+
+                        } */}
                     </div>
             </div>
+
+        </div>
     )
 }
 

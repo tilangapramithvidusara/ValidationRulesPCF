@@ -24,7 +24,7 @@ const sampleOutputData = {
                             }
                         ],
                         actions: {
-                            options: ['show', 'hide'],
+                            options: ['show', 'hide', 'outPutDoc'],
                             minMax: {
                                 min: 'sefie',
                                 max: 234,

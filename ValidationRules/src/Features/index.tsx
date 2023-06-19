@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SectionComponent from '../Components/sctionComponent/sectionComponent';
-import { loadAllQuestionsInSurvey, getCurrentState } from '../XRMRequests/xrmRequests';
+import { loadAllQuestionsInSurvey, getCurrentState, updateDataRequest } from '../XRMRequests/xrmRequests';
 import DisplayText from '../Components/displayText/displayText';
 import { Button, Checkbox, Switch } from 'antd';
 import CheckBox from '../Components/checkbox/checkbox';
@@ -110,6 +110,31 @@ const ParentComponent: React.FC = () => {
         } else {
             setActionList([])
         }
+    }
+
+
+    const _saveLogicXrmRequest = async () => {
+        const current_state = await getCurrentState();
+        console.log("current_state ----> ", current_state)
+        const actionsList = conditionData.map(acts => acts.blocks[0].if.actions).flat();
+        console.log("actionsList ----> ", actionsList)
+
+        // Remove duplicates using Set
+        const _actionsList = Array.from(new Set(actionsList));
+        let currentState = ''
+        if (current_state.data.includes('question')) {
+            currentState = "question";
+        } else if (current_state.data.includes('section')) {
+            currentState = "section";
+        } else if (current_state.data.includes('chapter')) {
+            currentState = "chapter";
+        } else {
+            setActionList([])
+        }
+
+        const result = await updateDataRequest('actionField', 'actionField', _actionsList);
+        console.log("resultresult ----> ", result);
+
     }
 
     useEffect(() => {
@@ -410,7 +435,7 @@ const ParentComponent: React.FC = () => {
                     toggleEnabled ?
                         <div className='mb-15 flex-wrap'>
                             <div className='minmaxText'>Min Value:</div>
-                            <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} />
+                            <NumberInputField selectedValue={{}} handleNumberChange={handleMinValueChange} defaultDisabled={false}/>
                         </div>
                         :
                         <div className='mb-15 flex-wrap'>
@@ -418,7 +443,8 @@ const ParentComponent: React.FC = () => {
                             <DropDown
                                 sampleData={operationsSampleData}
                                 onSelectItem={setMinQuestionValue}
-                                selectedValue={""}
+                                    selectedValue={""}
+                                    defaultDisabled={false}
                             />
                         </div>
                 }
@@ -426,7 +452,7 @@ const ParentComponent: React.FC = () => {
                     toggleEnabled ?
                         <div className='mb-15 flex-wrap'>
                             <div className='minmaxText'>Max Value:</div>
-                            <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} />
+                            <NumberInputField selectedValue={{}} handleNumberChange={handleMaxValueChange} defaultDisabled={false}/>
                         </div>
                         :
                         <div className='mb-15 flex-wrap'>
@@ -434,11 +460,15 @@ const ParentComponent: React.FC = () => {
                             <DropDown
                                 sampleData={operationsSampleData}
                                 onSelectItem={setMaxQuestionValue}
-                                selectedValue={""}
+                                    selectedValue={""}
+                                    defaultDisabled={false}
                             />
                         </div>
                 }
             </div>
+            </div>
+            <div className='saveBtn'>
+                <Button onClick={() => _saveLogicXrmRequest()}>Save Logic</Button>
             </div>
         </div>
     );

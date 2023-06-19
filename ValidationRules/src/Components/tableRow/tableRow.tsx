@@ -108,6 +108,7 @@ function TableRow({
                             sampleData={operationsSampleData}
                             onSelectItem={setSelectedOperations}
                             selectedValue={sampleObjData?.Operator || ""}
+                            defaultDisabled={false}
                         />
                     </td>
                 ) :
@@ -127,6 +128,7 @@ function TableRow({
                     sampleData={expressionSampleData}
                     onSelectItem={setSelectedExpression}
                     selectedValue={sampleObjData?.Expression || ""}
+                    defaultDisabled={false}
                 />
             </td>
             <td>
@@ -139,6 +141,7 @@ function TableRow({
                                 sampleData={expressionSampleData}
                                 onSelectItem={setSelectedAnswerType}
                                 selectedValue={sampleObjData?.Value || ""}
+                                defaultDisabled={false}
                             />
                 }
             </td>
