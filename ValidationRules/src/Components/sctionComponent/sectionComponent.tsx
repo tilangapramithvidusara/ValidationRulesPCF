@@ -348,7 +348,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                             <div>
                                 <CheckBox
                                     setCheckboxValues={setIfConditionActions}
-                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions || []}
+                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]["if"].actions.options || []}
                                     checkboxValuesFromConfig={actionList && actionList["if_actions"] ? actionList["if_actions"] : []}
                                 />
                             </div>
@@ -363,7 +363,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                             <div className='visible-box'>
                                 <CheckBox
                                     setCheckboxValues={setVisibilityEnable}
-                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]['if'].actions || []}
+                                    checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]['if'].actions.options || []}
                                     checkboxValuesFromConfig={[{ value: `${togAction.value}` }]}
                                     
                                     />
@@ -379,57 +379,6 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                         </div></>
                         })
                     }
-                        
-
-
-
-                    
-                        {/* <div>
-                            <div className='subTitle mb-15'></div>
-                            <div className='mb-15 flex-wrap'>
-                            <div className='visible-box'>
-                            <CheckBox
-                                setCheckboxValues={setToggledEnable}
-                                checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]['if'].actions || []}
-                                checkboxValuesFromConfig={[{ value: 'Visibility' }]}
-                                />
-                                Toggle
-                                <Switch
-                                className="custom-toggle"
-                                checkedChildren="Disable"
-                                unCheckedChildren="Enable"
-                                onChange={onToggleValueChanged}
-                                disabled={!toggleEnable.length}
-                                />
-                            </div>
-                        </div>
-                        </div> */}
-
-                    
-
-                        {/* <div>
-                            <div className='subTitle mb-15'></div>
-                            <div className='mb-15 flex-wrap'>
-                            <div className='visible-box'>
-                            <CheckBox
-                                setCheckboxValues={setDisplayOutput}
-                                checkboxDefaultSelectedValues={sampleObj && sampleObj[0] && sampleObj[0]['if'].actions || []}
-                                checkboxValuesFromConfig={[{ value: 'Visibility' }]}
-                                />
-                                Output Doc
-                                <Switch
-                                className="custom-toggle"
-                                checkedChildren="Hide"
-                                unCheckedChildren="Show"
-                                onChange={onToggleValueChanged}
-                                disabled={!displayOutput.length}
-                                />
-                            </div>
-                        </div>
-                    </div> */}
-                    
-
-
                         <div>
                             <div className='subTitle mb-15'>Min/Max Field</div>
                             <div className='mb-15 flex-wrap'>

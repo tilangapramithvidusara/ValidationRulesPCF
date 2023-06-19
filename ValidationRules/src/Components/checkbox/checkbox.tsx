@@ -22,19 +22,22 @@ function CheckBox({
   }, [checkboxValuesFromConfig])
 
   return (
-    <Checkbox.Group
-      style={{ display: 'block', marginBottom: '30px' }}
-      onChange={onChange}
-      className="actionWrap"
-      defaultValue={checkboxDefaultSelectedValues}
-    >
+   <>
       {
-        checkboxValuesFromConfig && checkboxValuesFromConfig.length && checkboxValuesFromConfig.map((configAction: any) => (
+        checkboxValuesFromConfig && checkboxValuesFromConfig.length > 0 && checkboxValuesFromConfig.map((configAction: any) => (
+          <Checkbox.Group
+          style={{ display: 'block', marginBottom: '30px' }}
+          onChange={onChange}
+          className="actionWrap"
+          defaultValue={checkboxDefaultSelectedValues}
+        >
           <Row>
             <Col span={8}>
               <Checkbox value={configAction.value}>{configAction?.displayName && <span className='checkboxLabel'>{configAction?.displayName}</span>} </Checkbox>
             </Col>
-        </Row>
+          </Row>
+          
+          </Checkbox.Group>
         ))
       }
       
@@ -50,7 +53,7 @@ function CheckBox({
        
           <Checkbox value="showAndOutput"><span className='checkboxLabel'>Show in output document</span> </Checkbox> */}
        
-    </Checkbox.Group>
+       </>
   );
 }
 

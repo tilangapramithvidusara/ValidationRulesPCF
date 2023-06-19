@@ -9,14 +9,14 @@ const sampleOutputData = {
                     if: {
                         conditions: [
                             {
-                                Row: 0,
+                                Row: 1,
                                 Expression: '==',
                                 Field: 'Question01',
                                 Operator: '&&',
                                 Value: 'String01',
                             },
                             {
-                                Row: 1,
+                                Row: 2,
                                 expression: '>',
                                 Field: 'Question02',
                                 Operator: '||',
@@ -40,21 +40,21 @@ const sampleOutputData = {
                     if: {
                         conditions: [
                             {
-                                Row: 0,
+                                Row: 1,
                                 Expression: '>',
-                                Field: 'Question03',
+                                Field: 'Question01',
                                 Operator: '',
                                 Value: 'String01',
                             },
                             {
-                                Row: 1,
+                                Row: 2,
                                 Expression: '>',
-                                Field: 'Question03',
+                                Field: 'Question02',
                                 Operator: '&&',
                                 Value: 'String01',
                             },
                             {
-                                Row: 2,
+                                Row: 3,
                                 Expression: '>',
                                 Field: 'Question03',
                                 Operator: '&&',

@@ -28,7 +28,7 @@ const ParentComponent: React.FC = () => {
     const [mappedElseActionCheckboxValues, setMappedElseActionCheckboxValues] = useState<any[]>([]);
     const [sectionKey, setSectionKey] = useState<any>(1);
     const [rowKey, setRowKey] = useState<any>();
-    const [sampleData, setSampleData] = useState<any>();
+    const [sampleData, setSampleData] = useState<any>(sampleOutputData);
     const [sections, setSections] = useState<{ key: number }[]>(sampleData?.ifConditions?.length ? sampleData?.ifConditions.map((_: any) => ({ key: _.index })) : [{ key: 1 }]);
     const [rowData, setRowData] = useState<any[]>([]);
     const [conditionData, setConditionData] = useState<any[]>([]);
@@ -91,7 +91,9 @@ const ParentComponent: React.FC = () => {
     
     const _getCurrentState = async () => {
         const result = await getCurrentState();
-        console.log("configs['queston_actions']", configs['question_actions'])
+        console.log("Action List config ----> ", configs['question_actions'])
+        console.log("Toggle Action List config ---> ", toggleWithCheckboxMapper['question_actions']['if']['toggleActions'])
+
         if (result.data.includes('question')) {
             setActionList(configs['question_actions']['actions'])
             setToggleActionList(toggleWithCheckboxMapper['question_actions']['if']['toggleActions'])
@@ -202,6 +204,7 @@ const ParentComponent: React.FC = () => {
     useEffect(() => {
         const indexes = conditionData.map(x => x.index);
         const expressionArray: React.SetStateAction<any[]> = [];
+        console.log("conditionData-->", conditionData)
         //   let operatorString = "" 
         indexes.forEach(x => {
             const releventDta = conditionData.filter(y => y.index === x)
@@ -223,14 +226,22 @@ const ParentComponent: React.FC = () => {
                     // operatorString = operation
                     return `${Field || ''} ${Expression || ''} ${AnswerType || ''} ${ifConditionArray[index + 1]?.Operator || ''}`;
                 });
-
-                expressionArray.push({ expressions: `${expressions}`, actions: mergedArray || [] })
-                setShowOutput(expressionArray)
+                console.log("EXPP", expressions)
+                if (expressions && expressions.length) {
+                    expressionArray.push({ expressions: `${expressions}`, actions: mergedArray || [] })
+                    setShowOutput(expressionArray)
+                }
+               
             }
         })
 
 
     }, [conditionData])
+
+    useEffect(() => {
+        console.log("SHOW Output", showOutput);
+
+    }, [showOutput]);
 
     const onActionCheckboxChanged = (e: CheckboxChangeEvent) => {
         setEnableActionField(!enableActionField);
@@ -291,31 +302,19 @@ const ParentComponent: React.FC = () => {
     }
 
     useEffect(() => {
-        console.log("CONDIIII 1", conditionData);
-        console.log("CONDIIII 2", rowKey);
-        console.log("CONDIIII 3", sectionKey);
-
         const matchedObjIndex = conditionData.findIndex((item) => item.index === sectionKey);
-
         if (matchedObjIndex !== -1) {
           const matchedObj = conditionData[matchedObjIndex];
-        
           matchedObj.blocks[0].if.conditions = matchedObj.blocks[0].if.conditions.filter(
             (condition: { Row: any; }) => condition.Row !== rowKey
           );
-        
           setConditionData([...conditionData]);
         }
-        
     }, [deleteRowAction])
 
-    useEffect(() => {
-        console.log("CONDIIII conditionData", conditionData);
-    }, [conditionData])
     return (
         <div>
             <div className="displayText">
-                {/* <DisplayText fieldOutputData={[]} /> */}
                 {
                     showOutput && showOutput.length > 0 && showOutput.map(x => {
                         return (
