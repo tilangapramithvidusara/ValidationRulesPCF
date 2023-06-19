@@ -14,6 +14,8 @@ import toggleWithCheckboxMapper from '../configs/toggleWithCheckboxMapper';
 import sampleOutputData from '../SampleData/SampleOutputData';
 import utilHelper from '../utilHelper/utilHelper';
 // import removeIcon from '../assets/delete.png';
+import { generateJsonLogicHandler } from '../Utils/logics.utils';
+import { LogicNewSample } from '../SampleData/SampleLogicData';
 
 type MinMaxFieldValues = {
     minValue: any,
@@ -76,6 +78,8 @@ const ParentComponent: React.FC = () => {
 
     const loadQuestionHandler = async () => {
         const result = await loadAllQuestionsInSurvey();
+        console.log('resss =====> ', result);
+        
         let questionListArray = result.data || [];
         // Check if 'result.data' exists and has 'entities' property
         if (questionListArray && questionListArray.length) {
@@ -111,6 +115,17 @@ const ParentComponent: React.FC = () => {
     useEffect(() => {
         loadQuestionHandler();
         _getCurrentState()
+        console.log("ACTLIST", actionList);
+
+    }, [actionList])
+
+    useEffect(() => {
+        // loadQuestionHandler();
+        // _getCurrentState()
+        //////
+        const logic = generateJsonLogicHandler(LogicNewSample);
+        console.log("11111111111111111======> ", logic);
+        
     }, []);
 
     // Update all section else when adding a new section with else
