@@ -51,11 +51,12 @@ export const LogicNewSample = {
                               Value: 'String01',
                           }
                       ],
-                      actions: ['show', 'hide'],
-                      minMax: {
-                          min: 123,
-                          max: 234,
-                          value: 'Question01' // This is optional
+                      actions: {
+                        options: ['show'],
+                        minMax: {
+                            min: 'sefie',
+                            max: 234,
+                        }
                       }
                   },
               },
@@ -89,7 +90,10 @@ export const LogicNewSample = {
                               Value: 'String01',
                           }
                       ],
-                      actions: ['show', 'hideAndOutput'],
+                      actions: {options: ['show', 'outPutDoc'], minMax: {
+                        min: 100,
+                        max: 12333,
+                    }},
                   },
               },
           ],

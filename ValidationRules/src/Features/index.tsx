@@ -12,6 +12,7 @@ import configs from '../configs/actionMapper';
 // import removeIcon from '../assets/delete.png';
 import { generateJsonLogicHandler } from '../Utils/logics.utils';
 import { LogicNewSample } from '../SampleData/SampleLogicData';
+import { saveLogicHandler } from '../Utils/save.utils';
 
 type MinMaxFieldValues = {
     minValue: any,
@@ -180,6 +181,9 @@ const ParentComponent: React.FC = () => {
         //////
         const logic = generateJsonLogicHandler(LogicNewSample);
         console.log("11111111111111111======> ", logic);
+        const final = saveLogicHandler(logic);
+        console.log("final 111111222222===> ", final);
+        
         
     }, []);
 
