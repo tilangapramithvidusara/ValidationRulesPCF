@@ -132,7 +132,7 @@ const ParentComponent: React.FC = () => {
             setActionList([])
         }
 
-        const result = await updateDataRequest('actionField', 'actionField', _actionsList);
+        const result = await updateDataRequest('gyde_visibilityrule', 'show', _actionsList);
         console.log("resultresult ----> ", result);
 
     }
@@ -264,7 +264,7 @@ const ParentComponent: React.FC = () => {
                 const expressions = ifConditionArray.map((condition: { Row: any; Expression: any; Field: any; Operator: any; AnswerType: any; }, index: any) => {
                     const { Row, Expression, Field, Operator, AnswerType } = condition;
                     // operatorString = operation
-                    return `${Field || ''} ${Expression || ''} ${AnswerType || ''} ${ifConditionArray[index + 1]?.Operator || ''}`;
+                    return `${Field || ''} ${Expression || ''} ${AnswerType || ''} ${ifConditionArray[index + 1]?.Operator || ' '} `;
                 });
                 console.log("EXPP", expressions)
                 if (expressions && expressions.length) {
@@ -359,13 +359,13 @@ const ParentComponent: React.FC = () => {
                     showOutput && showOutput.length > 0 && showOutput.map(x => {
                         return (
                             <div>
-                                <div> {`if(${x.expressions})`} {`{ ${x.actions} }`}</div>
+                                <div> {`if(${x.expressions.replace(",", "")})`} {`{ ${x.actions} }`}</div>
                             </div>
 
                         )
                     })
                 }
-                {
+                {/* {
                     elseShowOutput && elseShowOutput.length > 0 && elseShowOutput.map(x => {
                         return (
                             <div>
@@ -373,7 +373,7 @@ const ParentComponent: React.FC = () => {
                             </div>
                         );
                     })
-                }
+                } */}
             </div>
             {sections.map((section) => (
                 <div key={section.key}>

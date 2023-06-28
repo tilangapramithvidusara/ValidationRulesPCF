@@ -7,28 +7,30 @@ const sampleOutputData = {
             blocks: [
                 {
                     if: {
+                        isNested: true,
                         conditions: [
                             {
                                 Row: 1,
                                 Expression: '==',
                                 Field: 'Question01',
-                                Operator: '&&',
+                                Operator: '',
                                 Value: 'String01',
                             },
                             {
                                 Row: 2,
-                                expression: '>',
+                                Expression: '>',
                                 Field: 'Question02',
                                 Operator: '||',
                                 Value: 'String01',
                             }
                         ],
                         actions: {
-                            options: ['show', 'hide', 'outPutDoc'],
+                            options: ['show', 'hide', 'outPutDoc', 'minMax'],
                             minMax: {
                                 min: 'sefie',
                                 max: 234,
-                        }},
+                            }
+                        },
                     },
                 },
             ],

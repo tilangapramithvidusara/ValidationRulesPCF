@@ -136,7 +136,7 @@ function TableRow({
                     selectedQuestion && selectedQuestion?.questionType === 'text' ?
                         <Input value={inputvalue} onChange={(e) => setInputvalue(e.target.value)} defaultValue={sampleObjData?.Value}/> :
                         selectedQuestion && selectedQuestion?.questionType === 'numeric' ?
-                            <InputNumber onChange={(value) => handleInputTextChanged(value)} /> :
+                            <InputNumber onChange={(value) => handleInputTextChanged(value)} style={{width: "100%"}}/> :
                             <DropDown
                                 sampleData={expressionSampleData}
                                 onSelectItem={setSelectedAnswerType}

@@ -401,7 +401,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                         </div></>
                         })
                     } */}
-                    <div>
+                    <div className='subTitle mt-20'>
                         <div className='subTitle mb-15'>Min/Max Field</div>
                         
                         <div className='mb-15 flex-wrap'>
@@ -409,7 +409,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                     <div style={{ marginRight: '10px' }}>
                                         <Switch
                                             className="custom-toggle"
-                                            checkedChildren="Min Value"
+                                            checkedChildren="Value"
                                             unCheckedChildren="Question"
                                             onChange={() => setToggledEnableMin(!toggleEnableMin)}
                                             disabled={!minCheckboxEnabled}
@@ -439,7 +439,7 @@ const ParentComponent: React.FC<SectionComponentProps> = ({
                                     <div style={{ marginRight: '10px' }}>
                                         <Switch
                                             className="custom-toggle"
-                                            checkedChildren="Min Value"
+                                            checkedChildren="Value"
                                             unCheckedChildren="Question"
                                             onChange={() => setToggledEnableMax(!toggleEnableMax)}
                                             disabled={!maxCheckboxEnabled}

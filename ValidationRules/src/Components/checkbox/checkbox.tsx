@@ -26,7 +26,7 @@ function CheckBox({
       {
         checkboxValuesFromConfig && checkboxValuesFromConfig.length > 0 && checkboxValuesFromConfig.map((configAction: any) => (
           <Checkbox.Group
-          style={{ display: 'block', marginBottom: '30px' }}
+          style={{ display: 'block', marginBottom: '10px' }}
           onChange={onChange}
           className="actionWrap"
           defaultValue={checkboxDefaultSelectedValues}
